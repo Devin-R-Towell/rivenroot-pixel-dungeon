@@ -1,4 +1,4 @@
-# Shattered Pixel Dungeon
+# Rivenroot Pixel Dungeon
 
 [Rivenroot Pixel Dungeon] is an open-source traditional roguelike dungeon crawler with randomized levels and enemies, and hundreds of items to collect and use. 
 
