@@ -540,6 +540,7 @@ public abstract class Char extends Actor {
 
 	public static int INFINITE_ACCURACY = 1_000_000;
 	public static int INFINITE_EVASION = 1_000_000;
+	public static int INFINITE_DAMAGE = 1_000_000;
 
 	final public static boolean hit( Char attacker, Char defender, boolean magic ) {
 		return hit(attacker, defender, magic ? 2f : 1f, magic);
@@ -548,6 +549,7 @@ public abstract class Char extends Actor {
 	public static boolean hit( Char attacker, Char defender, float accMulti, boolean magic ) {
 		float acuStat = attacker.attackSkill( defender );
 		float defStat = defender.defenseSkill( attacker );
+
 
 		if (defender instanceof Hero && ((Hero) defender).damageInterrupt){
 			((Hero) defender).interrupt();
@@ -561,6 +563,8 @@ public abstract class Char extends Actor {
 		if (defender.buff(MonkEnergy.MonkAbility.Focus.FocusBuff.class) != null){
 			defStat = INFINITE_EVASION;
 		}
+
+		// need to add a buff for the shopkeeper called Furious so we can add IFNINITE_DAMAGE
 
 		//if accuracy or evasion are large enough, treat them as infinite.
 		//note that infinite evasion beats infinite accuracy
@@ -596,6 +600,10 @@ public abstract class Char extends Actor {
 	}
 	
 	public int defenseSkill( Char enemy ) {
+		return 0;
+	}
+
+    public int damageSkill () {
 		return 0;
 	}
 	
@@ -634,7 +642,7 @@ public abstract class Char extends Actor {
 
 		return damage;
 	}
-	
+
 	public float speed() {
 		float speed = baseSpeed;
 		if ( buff( Cripple.class ) != null ) speed /= 2f;

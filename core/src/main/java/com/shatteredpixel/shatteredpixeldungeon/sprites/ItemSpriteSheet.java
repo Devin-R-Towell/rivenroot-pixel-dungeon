@@ -579,6 +579,7 @@ public class ItemSpriteSheet {
 	public static final int POTION_CHARCOAL = POTIONS+9;
 	public static final int POTION_SILVER   = POTIONS+10;
 	public static final int POTION_IVORY    = POTIONS+11;
+	public static final int POTION_EMERALD  = POTIONS+12;
 
 	public static final int LIQUID_METAL    = POTIONS+13;
 	static {
@@ -600,6 +601,7 @@ public class ItemSpriteSheet {
 	public static final int EXOTIC_CHARCOAL = EXOTIC_POTIONS+9;
 	public static final int EXOTIC_SILVER   = EXOTIC_POTIONS+10;
 	public static final int EXOTIC_IVORY    = EXOTIC_POTIONS+11;
+	public static final int EXOTIC_EMERALD  = EXOTIC_POTIONS+12;
 	static {
 		for (int i = EXOTIC_POTIONS; i < EXOTIC_POTIONS+16; i++)
 			assignItemRect(i, 12, 13);
@@ -910,6 +912,7 @@ public class ItemSpriteSheet {
 		public static final int POTION_PARAGAS  = POTIONS+9;
 		public static final int POTION_PURITY   = POTIONS+10;
 		public static final int POTION_EXP      = POTIONS+11;
+		public static final int POTION_MENDING  = POTIONS+12;
 		static {
 			assignIconRect( POTION_STRENGTH,    7, 7 );
 			assignIconRect( POTION_HEALING,     6, 7 );
@@ -923,6 +926,7 @@ public class ItemSpriteSheet {
 			assignIconRect( POTION_PARAGAS,     7, 7 );
 			assignIconRect( POTION_PURITY,      5, 7 );
 			assignIconRect( POTION_EXP,         7, 7 );
+			assignIconRect( POTION_MENDING,     7, 7 );
 		}
 
 		private static final int EXOTIC_POTIONS =                            xy(1, 7);  //16 slots
@@ -938,6 +942,7 @@ public class ItemSpriteSheet {
 		public static final int POTION_EARTHARMR= EXOTIC_POTIONS+9;
 		public static final int POTION_CLEANSE  = EXOTIC_POTIONS+10;
 		public static final int POTION_DIVINE   = EXOTIC_POTIONS+11;
+		public static final int POTION_LIFE		= EXOTIC_POTIONS+12;
 		static {
 			assignIconRect( POTION_MASTERY,     7, 7 );
 			assignIconRect( POTION_SHIELDING,   6, 6 );
@@ -951,6 +956,7 @@ public class ItemSpriteSheet {
 			assignIconRect( POTION_EARTHARMR,   6, 6 );
 			assignIconRect( POTION_CLEANSE,     7, 7 );
 			assignIconRect( POTION_DIVINE,      7, 7 );
+			assignIconRect( POTION_LIFE, 		7, 7 );
 		}
 
 		                                                                                //16 free slots

@@ -2021,7 +2021,7 @@ public class Hero extends Char {
 	}
 	
 	@Override
-	public void die( Object cause ) {
+	public void  die( Object cause ){
 		
 		curAction = null;
 
