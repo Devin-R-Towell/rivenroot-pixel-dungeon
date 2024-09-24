@@ -19,37 +19,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles;
+package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
-import com.watabou.noosa.audio.Sample;
-import com.watabou.utils.PathFinder;
-import com.watabou.utils.Random;
 
-public class ThrowingStone extends MissileWeapon {
+public class HeavyCrossbow extends RangedWeapon {
 
 	{
-		image = ItemSpriteSheet.THROWING_STONE;
+		image = ItemSpriteSheet.HEAVYCROSSBOW;
 		hitSound = Assets.Sounds.HIT;
-		hitSoundPitch = 1.1f;
+		hitSoundPitch = 1f;
 
-		bones = false;
+		//check Dart.class for additional properties
+		//This is an exsperiment.
 
-		tier = 1;
-
-		//infinite, even with penalties
-		baseUses = 1000;
-		sticky = false;
-	}
-
-	@Override
-	public int value() {
-		return super.value()/2; //half normal value
+		tier = 4;
 	}
 }

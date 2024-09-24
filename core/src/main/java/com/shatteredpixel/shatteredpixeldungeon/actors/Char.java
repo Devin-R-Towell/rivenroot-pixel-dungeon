@@ -143,96 +143,97 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 
 public abstract class Char extends Actor {
-	
+
 	public int pos = 0;
-	
+
 	public CharSprite sprite;
-	
+
 	public int HT;
 	public int HP;
-	
-	protected float baseSpeed	= 1;
+
+	protected float baseSpeed = 1;
 	protected PathFinder.Path path;
 
-	public int paralysed	    = 0;
-	public boolean rooted		= false;
-	public boolean flying		= false;
-	public int invisible		= 0;
+	public int paralysed = 0;
+	public boolean rooted = false;
+	public boolean flying = false;
+	public int invisible = 0;
 
 	//these are relative to the hero
-	public enum Alignment{
+	public enum Alignment {
 		ENEMY,
 		NEUTRAL,
 		ALLY
 	}
+
 	public Alignment alignment;
-	
-	public int viewDistance	= 8;
-	
+
+	public int viewDistance = 8;
+
 	public boolean[] fieldOfView = null;
-	
+
 	private LinkedHashSet<Buff> buffs = new LinkedHashSet<>();
-	
+
 	@Override
 	protected boolean act() {
-		if (fieldOfView == null || fieldOfView.length != Dungeon.level.length()){
+		if (fieldOfView == null || fieldOfView.length != Dungeon.level.length()) {
 			fieldOfView = new boolean[Dungeon.level.length()];
 		}
-		Dungeon.level.updateFieldOfView( this, fieldOfView );
+		Dungeon.level.updateFieldOfView(this, fieldOfView);
 
 		//throw any items that are on top of an immovable char
-		if (properties().contains(Property.IMMOVABLE)){
+		if (properties().contains(Property.IMMOVABLE)) {
 			throwItems();
 		}
 		return false;
 	}
 
-	protected void throwItems(){
-		Heap heap = Dungeon.level.heaps.get( pos );
+	protected void throwItems() {
+		Heap heap = Dungeon.level.heaps.get(pos);
 		if (heap != null && heap.type == Heap.Type.HEAP
 				&& !(heap.peek() instanceof Tengu.BombAbility.BombItem)
 				&& !(heap.peek() instanceof Tengu.ShockerAbility.ShockerItem)) {
 			ArrayList<Integer> candidates = new ArrayList<>();
-			for (int n : PathFinder.NEIGHBOURS8){
-				if (Dungeon.level.passable[pos+n]){
-					candidates.add(pos+n);
+			for (int n : PathFinder.NEIGHBOURS8) {
+				if (Dungeon.level.passable[pos + n]) {
+					candidates.add(pos + n);
 				}
 			}
-			if (!candidates.isEmpty()){
-				Dungeon.level.drop( heap.pickUp(), Random.element(candidates) ).sprite.drop( pos );
+			if (!candidates.isEmpty()) {
+				Dungeon.level.drop(heap.pickUp(), Random.element(candidates)).sprite.drop(pos);
 			}
 		}
 	}
 
-	public String name(){
+	public String name() {
 		return Messages.get(this, "name");
 	}
 
-	public boolean canInteract(Char c){
-		if (Dungeon.level.adjacent( pos, c.pos )){
+	public boolean canInteract(Char c) {
+		if (Dungeon.level.adjacent(pos, c.pos)) {
 			return true;
 		} else if (c instanceof Hero
 				&& alignment == Alignment.ALLY
 				&& !hasProp(this, Property.IMMOVABLE)
-				&& Dungeon.level.distance(pos, c.pos) <= 2*Dungeon.hero.pointsInTalent(Talent.ALLY_WARP)){
+				&& Dungeon.level.distance(pos, c.pos) <= 2 * Dungeon.hero.pointsInTalent(Talent.ALLY_WARP)) {
 			return true;
 		} else {
 			return false;
 		}
 	}
-	
+
 	//swaps places by default
-	public boolean interact(Char c){
+	public boolean interact(Char c) {
 
 		//don't allow char to swap onto hazard unless they're flying
 		//you can swap onto a hazard though, as you're not the one instigating the swap
-		if (!Dungeon.level.passable[pos] && !c.flying){
+		if (!Dungeon.level.passable[pos] && !c.flying) {
 			return true;
 		}
 
 		//can't swap into a space without room
 		if (properties().contains(Property.LARGE) && !Dungeon.level.openSpace[c.pos]
-			|| c.properties().contains(Property.LARGE) && !Dungeon.level.openSpace[pos]){
+				|| c.properties().contains(Property.LARGE) && !Dungeon.level.openSpace[pos]) {
 			return true;
 		}
 
@@ -242,14 +243,14 @@ public abstract class Char extends Actor {
 		int newPos = c.pos;
 
 		//can't swap or ally warp if either char is immovable
-		if (hasProp(this, Property.IMMOVABLE) || hasProp(c, Property.IMMOVABLE)){
+		if (hasProp(this, Property.IMMOVABLE) || hasProp(c, Property.IMMOVABLE)) {
 			return true;
 		}
 
 		//warp instantly with allies in this case
-		if (c == Dungeon.hero && Dungeon.hero.hasTalent(Talent.ALLY_WARP)){
+		if (c == Dungeon.hero && Dungeon.hero.hasTalent(Talent.ALLY_WARP)) {
 			PathFinder.buildDistanceMap(c.pos, BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
-			if (PathFinder.distance[pos] == Integer.MAX_VALUE){
+			if (PathFinder.distance[pos] == Integer.MAX_VALUE) {
 				return true;
 			}
 			pos = newPos;
@@ -263,117 +264,117 @@ public abstract class Char extends Actor {
 
 		//can't swap places if one char has restricted movement
 		if (paralysed > 0 || c.paralysed > 0 || rooted || c.rooted
-				|| buff(Vertigo.class) != null || c.buff(Vertigo.class) != null){
+				|| buff(Vertigo.class) != null || c.buff(Vertigo.class) != null) {
 			return true;
 		}
 
 		c.pos = oldPos;
-		moveSprite( oldPos, newPos );
-		move( newPos );
+		moveSprite(oldPos, newPos);
+		move(newPos);
 
 		c.pos = newPos;
-		c.sprite.move( newPos, oldPos );
-		c.move( oldPos );
-		
-		c.spend( 1 / c.speed() );
+		c.sprite.move(newPos, oldPos);
+		c.move(oldPos);
 
-		if (c == Dungeon.hero){
-			if (Dungeon.hero.subClass == HeroSubClass.FREERUNNER){
+		c.spend(1 / c.speed());
+
+		if (c == Dungeon.hero) {
+			if (Dungeon.hero.subClass == HeroSubClass.FREERUNNER) {
 				Buff.affect(Dungeon.hero, Momentum.class).gainStack();
 			}
 
 			Dungeon.hero.busy();
 		}
-		
+
 		return true;
 	}
-	
-	protected boolean moveSprite( int from, int to ) {
-		
+
+	protected boolean moveSprite(int from, int to) {
+
 		if (sprite.isVisible() && sprite.parent != null && (Dungeon.level.heroFOV[from] || Dungeon.level.heroFOV[to])) {
-			sprite.move( from, to );
+			sprite.move(from, to);
 			return true;
 		} else {
 			sprite.turnTo(from, to);
-			sprite.place( to );
+			sprite.place(to);
 			return true;
 		}
 	}
 
-	public void hitSound( float pitch ){
+	public void hitSound(float pitch) {
 		Sample.INSTANCE.play(Assets.Sounds.HIT, 1, pitch);
 	}
 
-	public boolean blockSound( float pitch ) {
+	public boolean blockSound(float pitch) {
 		return false;
 	}
-	
-	protected static final String POS       = "pos";
-	protected static final String TAG_HP    = "HP";
-	protected static final String TAG_HT    = "HT";
-	protected static final String TAG_SHLD  = "SHLD";
-	protected static final String BUFFS	    = "buffs";
-	
+
+	protected static final String POS = "pos";
+	protected static final String TAG_HP = "HP";
+	protected static final String TAG_HT = "HT";
+	protected static final String TAG_SHLD = "SHLD";
+	protected static final String BUFFS = "buffs";
+
 	@Override
-	public void storeInBundle( Bundle bundle ) {
-		
-		super.storeInBundle( bundle );
-		
-		bundle.put( POS, pos );
-		bundle.put( TAG_HP, HP );
-		bundle.put( TAG_HT, HT );
-		bundle.put( BUFFS, buffs );
+	public void storeInBundle(Bundle bundle) {
+
+		super.storeInBundle(bundle);
+
+		bundle.put(POS, pos);
+		bundle.put(TAG_HP, HP);
+		bundle.put(TAG_HT, HT);
+		bundle.put(BUFFS, buffs);
 	}
-	
+
 	@Override
-	public void restoreFromBundle( Bundle bundle ) {
-		
-		super.restoreFromBundle( bundle );
-		
-		pos = bundle.getInt( POS );
-		HP = bundle.getInt( TAG_HP );
-		HT = bundle.getInt( TAG_HT );
-		
-		for (Bundlable b : bundle.getCollection( BUFFS )) {
+	public void restoreFromBundle(Bundle bundle) {
+
+		super.restoreFromBundle(bundle);
+
+		pos = bundle.getInt(POS);
+		HP = bundle.getInt(TAG_HP);
+		HT = bundle.getInt(TAG_HT);
+
+		for (Bundlable b : bundle.getCollection(BUFFS)) {
 			if (b != null) {
-				((Buff)b).attachTo( this );
+				((Buff) b).attachTo(this);
 			}
 		}
 	}
 
-	final public boolean attack( Char enemy ){
+	final public boolean attack(Char enemy) {
 		return attack(enemy, 1f, 0f, 1f);
 	}
-	
-	public boolean attack( Char enemy, float dmgMulti, float dmgBonus, float accMulti ) {
+
+	public boolean attack(Char enemy, float dmgMulti, float dmgBonus, float accMulti) {
 
 		if (enemy == null) return false;
-		
+
 		boolean visibleFight = Dungeon.level.heroFOV[pos] || Dungeon.level.heroFOV[enemy.pos];
 
 		if (enemy.isInvulnerable(getClass())) {
 
 			if (visibleFight) {
-				enemy.sprite.showStatus( CharSprite.POSITIVE, Messages.get(this, "invulnerable") );
+				enemy.sprite.showStatus(CharSprite.POSITIVE, Messages.get(this, "invulnerable"));
 
 				Sample.INSTANCE.play(Assets.Sounds.HIT_PARRY, 1f, Random.Float(0.96f, 1.05f));
 			}
 
 			return false;
 
-		} else if (hit( this, enemy, accMulti, false )) {
-			
+		} else if (hit(this, enemy, accMulti, false)) {
+
 			int dr = Math.round(enemy.drRoll() * AscensionChallenge.statModifier(enemy));
-			
-			if (this instanceof Hero){
-				Hero h = (Hero)this;
+
+			if (this instanceof Hero) {
+				Hero h = (Hero) this;
 				if (h.belongings.attackingWeapon() instanceof MissileWeapon
 						&& h.subClass == HeroSubClass.SNIPER
-						&& !Dungeon.level.adjacent(h.pos, enemy.pos)){
+						&& !Dungeon.level.adjacent(h.pos, enemy.pos)) {
 					dr = 0;
 				}
 
-				if (h.buff(MonkEnergy.MonkAbility.UnarmedAbilityTracker.class) != null){
+				if (h.buff(MonkEnergy.MonkAbility.UnarmedAbilityTracker.class) != null) {
 					dr = 0;
 				}
 			}
@@ -382,7 +383,7 @@ public abstract class Char extends Actor {
 			// potentially applying various multiplier effects
 			float dmg;
 			Preparation prep = buff(Preparation.class);
-			if (prep != null){
+			if (prep != null) {
 				dmg = prep.damageRoll(this);
 				if (this == Dungeon.hero && Dungeon.hero.hasTalent(Talent.BOUNTY_HUNTER)) {
 					Buff.affect(Dungeon.hero, Talent.BountyHunterTracker.class, 0.0f);
@@ -391,7 +392,7 @@ public abstract class Char extends Actor {
 				dmg = damageRoll();
 			}
 
-			dmg = dmg*dmgMulti;
+			dmg = dmg * dmgMulti;
 
 			//flat damage bonus is affected by multipliers
 			dmg += dmgBonus;
@@ -399,11 +400,11 @@ public abstract class Char extends Actor {
 			Berserk berserk = buff(Berserk.class);
 			if (berserk != null) dmg = berserk.damageFactor(dmg);
 
-			if (buff( Fury.class ) != null) {
+			if (buff(Fury.class) != null) {
 				dmg *= 1.5f;
 			}
 
-			for (ChampionEnemy buff : buffs(ChampionEnemy.class)){
+			for (ChampionEnemy buff : buffs(ChampionEnemy.class)) {
 				dmg *= buff.meleeDamageFactor();
 			}
 
@@ -415,23 +416,23 @@ public abstract class Char extends Actor {
 
 			//enemy endure
 			endure = enemy.buff(Endure.EndureTracker.class);
-			if (endure != null){
+			if (endure != null) {
 				dmg = endure.adjustDamageTaken(dmg);
 			}
 
-			if (enemy.buff(ScrollOfChallenge.ChallengeArena.class) != null){
+			if (enemy.buff(ScrollOfChallenge.ChallengeArena.class) != null) {
 				dmg *= 0.67f;
 			}
 
-			if (enemy.buff(MonkEnergy.MonkAbility.Meditate.MeditateResistance.class) != null){
+			if (enemy.buff(MonkEnergy.MonkAbility.Meditate.MeditateResistance.class) != null) {
 				dmg *= 0.2f;
 			}
 
-			if ( buff(Weakness.class) != null ){
+			if (buff(Weakness.class) != null) {
 				dmg *= 0.67f;
 			}
-			
-			int effectiveDamage = enemy.defenseProc( this, Math.round(dmg) );
+
+			int effectiveDamage = enemy.defenseProc(this, Math.round(dmg));
 			//do not trigger on-hit logic if defenseProc returned a negative value
 			if (effectiveDamage >= 0) {
 				effectiveDamage = Math.max(effectiveDamage - dr, 0);
@@ -456,16 +457,16 @@ public abstract class Char extends Actor {
 
 			// If the enemy is already dead, interrupt the attack.
 			// This matters as defence procs can sometimes inflict self-damage, such as armor glyphs.
-			if (!enemy.isAlive()){
+			if (!enemy.isAlive()) {
 				return true;
 			}
 
-			enemy.damage( effectiveDamage, this );
+			enemy.damage(effectiveDamage, this);
 
-			if (buff(FireImbue.class) != null)  buff(FireImbue.class).proc(enemy);
+			if (buff(FireImbue.class) != null) buff(FireImbue.class).proc(enemy);
 			if (buff(FrostImbue.class) != null) buff(FrostImbue.class).proc(enemy);
 
-			if (enemy.isAlive() && enemy.alignment != alignment && prep != null && prep.canKO(enemy)){
+			if (enemy.isAlive() && enemy.alignment != alignment && prep != null && prep.canKO(enemy)) {
 				enemy.HP = 0;
 				if (!enemy.isAlive()) {
 					enemy.die(this);
@@ -480,10 +481,10 @@ public abstract class Char extends Actor {
 			}
 
 			Talent.CombinedLethalityAbilityTracker combinedLethality = buff(Talent.CombinedLethalityAbilityTracker.class);
-			if (combinedLethality != null && this instanceof Hero && ((Hero) this).belongings.attackingWeapon() instanceof MeleeWeapon && combinedLethality.weapon != ((Hero) this).belongings.attackingWeapon()){
-				if ( enemy.isAlive() && enemy.alignment != alignment && !Char.hasProp(enemy, Property.BOSS)
+			if (combinedLethality != null && this instanceof Hero && ((Hero) this).belongings.attackingWeapon() instanceof MeleeWeapon && combinedLethality.weapon != ((Hero) this).belongings.attackingWeapon()) {
+				if (enemy.isAlive() && enemy.alignment != alignment && !Char.hasProp(enemy, Property.BOSS)
 						&& !Char.hasProp(enemy, Property.MINIBOSS) &&
-						(enemy.HP/(float)enemy.HT) <= 0.4f*((Hero)this).pointsInTalent(Talent.COMBINED_LETHALITY)/3f) {
+						(enemy.HP / (float) enemy.HT) <= 0.4f * ((Hero) this).pointsInTalent(Talent.COMBINED_LETHALITY) / 3f) {
 					enemy.HP = 0;
 					if (!enemy.isAlive()) {
 						enemy.die(this);
@@ -506,61 +507,60 @@ public abstract class Char extends Actor {
 
 			if (!enemy.isAlive() && visibleFight) {
 				if (enemy == Dungeon.hero) {
-					
+
 					if (this == Dungeon.hero) {
 						return true;
 					}
 
 					if (this instanceof WandOfLivingEarth.EarthGuardian
-							|| this instanceof MirrorImage || this instanceof PrismaticImage){
+							|| this instanceof MirrorImage || this instanceof PrismaticImage) {
 						Badges.validateDeathFromFriendlyMagic();
 					}
-					Dungeon.fail( this );
-					GLog.n( Messages.capitalize(Messages.get(Char.class, "kill", name())) );
-					
+					Dungeon.fail(this);
+					GLog.n(Messages.capitalize(Messages.get(Char.class, "kill", name())));
+
 				} else if (this == Dungeon.hero) {
-					GLog.i( Messages.capitalize(Messages.get(Char.class, "defeat", enemy.name())) );
+					GLog.i(Messages.capitalize(Messages.get(Char.class, "defeat", enemy.name())));
 				}
 			}
-			
+
 			return true;
-			
+
 		} else {
 
-			enemy.sprite.showStatus( CharSprite.NEUTRAL, enemy.defenseVerb() );
+			enemy.sprite.showStatus(CharSprite.NEUTRAL, enemy.defenseVerb());
 			if (visibleFight) {
 				//TODO enemy.defenseSound? currently miss plays for monks/crab even when they parry
 				Sample.INSTANCE.play(Assets.Sounds.MISS);
 			}
-			
+
 			return false;
-			
+
 		}
 	}
 
 	public static int INFINITE_ACCURACY = 1_000_000;
 	public static int INFINITE_EVASION = 1_000_000;
-	public static int INFINITE_DAMAGE = 1_000_000;
 
-	final public static boolean hit( Char attacker, Char defender, boolean magic ) {
+	final public static boolean hit(Char attacker, Char defender, boolean magic) {
 		return hit(attacker, defender, magic ? 2f : 1f, magic);
 	}
 
-	public static boolean hit( Char attacker, Char defender, float accMulti, boolean magic ) {
-		float acuStat = attacker.attackSkill( defender );
-		float defStat = defender.defenseSkill( attacker );
+	public static boolean hit(Char attacker, Char defender, float accMulti, boolean magic) {
+		float acuStat = attacker.attackSkill(defender);
+		float defStat = defender.defenseSkill(attacker);
 
 
-		if (defender instanceof Hero && ((Hero) defender).damageInterrupt){
+		if (defender instanceof Hero && ((Hero) defender).damageInterrupt) {
 			((Hero) defender).interrupt();
 		}
 
 		//invisible chars always hit (for the hero this is surprise attacking)
-		if (attacker.invisible > 0 && attacker.canSurpriseAttack()){
+		if (attacker.invisible > 0 && attacker.canSurpriseAttack()) {
 			acuStat = INFINITE_ACCURACY;
 		}
 
-		if (defender.buff(MonkEnergy.MonkAbility.Focus.FocusBuff.class) != null){
+		if (defender.buff(MonkEnergy.MonkAbility.Focus.FocusBuff.class) != null) {
 			defStat = INFINITE_EVASION;
 		}
 
@@ -568,49 +568,49 @@ public abstract class Char extends Actor {
 
 		//if accuracy or evasion are large enough, treat them as infinite.
 		//note that infinite evasion beats infinite accuracy
-		if (defStat >= INFINITE_EVASION){
+		if (defStat >= INFINITE_EVASION) {
 			return false;
-		} else if (acuStat >= INFINITE_ACCURACY){
+		} else if (acuStat >= INFINITE_ACCURACY) {
 			return true;
 		}
 
-		float acuRoll = Random.Float( acuStat );
+		float acuRoll = Random.Float(acuStat);
 		if (attacker.buff(Bless.class) != null) acuRoll *= 1.25f;
-		if (attacker.buff(  Hex.class) != null) acuRoll *= 0.8f;
-		if (attacker.buff( Daze.class) != null) acuRoll *= 0.5f;
-		for (ChampionEnemy buff : attacker.buffs(ChampionEnemy.class)){
+		if (attacker.buff(Hex.class) != null) acuRoll *= 0.8f;
+		if (attacker.buff(Daze.class) != null) acuRoll *= 0.5f;
+		for (ChampionEnemy buff : attacker.buffs(ChampionEnemy.class)) {
 			acuRoll *= buff.evasionAndAccuracyFactor();
 		}
 		acuRoll *= AscensionChallenge.statModifier(attacker);
-		
-		float defRoll = Random.Float( defStat );
+
+		float defRoll = Random.Float(defStat);
 		if (defender.buff(Bless.class) != null) defRoll *= 1.25f;
-		if (defender.buff(  Hex.class) != null) defRoll *= 0.8f;
-		if (defender.buff( Daze.class) != null) defRoll *= 0.5f;
-		for (ChampionEnemy buff : defender.buffs(ChampionEnemy.class)){
+		if (defender.buff(Hex.class) != null) defRoll *= 0.8f;
+		if (defender.buff(Daze.class) != null) defRoll *= 0.5f;
+		for (ChampionEnemy buff : defender.buffs(ChampionEnemy.class)) {
 			defRoll *= buff.evasionAndAccuracyFactor();
 		}
 		defRoll *= AscensionChallenge.statModifier(defender);
-		
+
 		return (acuRoll * accMulti) >= defRoll;
 	}
 
-	public int attackSkill( Char target ) {
-		return 0;
-	}
-	
-	public int defenseSkill( Char enemy ) {
+	public int attackSkill(Char target) {
 		return 0;
 	}
 
-    public int damageSkill () {
+	public int defenseSkill(Char enemy) {
 		return 0;
 	}
-	
+
+	public int damageSkill() {
+		return 0;
+	}
+
 	public String defenseVerb() {
 		return Messages.get(this, "def_verb");
 	}
-	
+
 	public int drRoll() {
 		int dr = 0;
 
@@ -618,7 +618,7 @@ public abstract class Char extends Actor {
 
 		return dr;
 	}
-	
+
 	public int damageRoll() {
 		return 1;
 	}

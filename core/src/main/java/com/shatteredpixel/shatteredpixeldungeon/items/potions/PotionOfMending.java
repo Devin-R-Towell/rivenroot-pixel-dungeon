@@ -59,7 +59,7 @@ public class PotionOfMending extends Potion {
             healing.setHeal((int) (ch.HT * 0.5F), 0.1f, 15);
             healing.applyVialEffect();
             if (ch == Dungeon.hero){
-                GLog.p( Messages.get(PotionOfHealing.class, "heal") );
+                GLog.p( Messages.get(PotionOfMending.class, "heal") );
             }
         }
     }

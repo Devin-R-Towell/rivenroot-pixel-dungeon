@@ -108,7 +108,12 @@ public class Artifact extends KindofMisc {
 
 		}
 	}
-
+	/*
+	@override
+	public boolean isGooUpgradable() {
+		return true;
+	}
+	*/
 	@Override
 	public boolean isUpgradable() {
 		return false;

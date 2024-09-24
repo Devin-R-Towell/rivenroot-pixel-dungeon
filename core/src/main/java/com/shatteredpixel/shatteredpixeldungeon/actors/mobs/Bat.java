@@ -24,8 +24,10 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;
+import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfMending;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.BatSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.watabou.utils.Random;
@@ -44,7 +46,7 @@ public class Bat extends Mob {
 		
 		flying = true;
 		
-		loot = new PotionOfHealing();
+		loot = Generator.Category.POT_S1;
 		lootChance = 0.1667f; //by default, see lootChance()
 	}
 	
@@ -81,16 +83,25 @@ public class Bat extends Mob {
 		
 		return damage;
 	}
-	
+
 	@Override
 	public float lootChance(){
 		return super.lootChance() * ((7f - Dungeon.LimitedDrops.BAT_HP.count) / 7f);
 	}
-	
+
 	@Override
 	public Item createLoot(){
-		Dungeon.LimitedDrops.BAT_HP.count++;
-		return super.createLoot();
+
+		if (Random.Int(3) == 0 && Random.Int(8) > Dungeon.LimitedDrops.BAT_HP.count ){
+			Dungeon.LimitedDrops.BAT_HP.count++;
+			return new PotionOfMending();
+		} else {
+			Item i;
+			do {
+				i = Generator.randomUsingDefaults(Generator.Category.POTION);
+			} while (i instanceof PotionOfMending);
+			return i;
+		}
+
 	}
-	
 }

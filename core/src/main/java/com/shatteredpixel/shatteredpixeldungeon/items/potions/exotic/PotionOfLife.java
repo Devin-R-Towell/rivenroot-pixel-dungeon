@@ -24,11 +24,14 @@ package com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barrier;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Healing;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Poison;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.effects.FloatingText;;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 
@@ -50,17 +53,25 @@ public class PotionOfLife extends ExoticPotion {
         if (ch == Dungeon.hero && Dungeon.isChallenged(Challenges.NO_HEALING)){
             pharmacophobiaProc(Dungeon.hero);
         } else {
-            //starts out healing 30 hp, equalizes with hero health total at level 11
+            //heals you for full health and gives you ~30% shield if you are the hero.
             Healing healing = Buff.affect(ch, Healing.class);
             healing.setHeal((int) (ch.HT * 1.0f), 1.0f, 0);
             healing.applyVialEffect();
             Buff.detachAllNegativeBuffs(ch);
+            healing.applyVialEffect();
+            if (ch == Dungeon.hero){
+                Buff.affect(ch, Barrier.class).setShield((int) (0.3f * ch.HT + 5));
+                ch.sprite.showStatusWithIcon( CharSprite.POSITIVE, Integer.toString((int) (0.3f * ch.HT + 5)), FloatingText.SHIELDING );
+                GLog.p( Messages.get(PotionOfLife.class, "heal") );
+            }
+
         }
     }
 
     public static void pharmacophobiaProc( Hero hero ){
         // harms the hero for ~20% of their max HP in poison
         Buff.affect( hero, Poison.class).set(2 + hero.lvl/4);
+        Buff.detach(hero, Barrier.class);
     }
 
     @Override

@@ -21,7 +21,6 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee;
 
-import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
@@ -30,29 +29,18 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfBlastWave;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.Dart;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 
-public class Crossbow extends MeleeWeapon {
-	
-	{
-		image = ItemSpriteSheet.CROSSBOW;
-		hitSound = Assets.Sounds.HIT;
-		hitSoundPitch = 1f;
-		
-		//check Dart.class for additional properties
-		
-		tier = 4;
-	}
+public class RangedWeapon extends MeleeWeapon {
 
 	@Override
 	public boolean doUnequip(Hero hero, boolean collect, boolean single) {
 		if (super.doUnequip(hero, collect, single)){
 			if (hero.buff(ChargedShot.class) != null &&
-					!(hero.belongings.weapon() instanceof Crossbow)
-					&& !(hero.belongings.secondWep() instanceof Crossbow)){
-				//clear charged shot if no crossbow is equipped
+					!(hero.belongings.weapon() instanceof RangedWeapon)
+					&& !(hero.belongings.secondWep() instanceof RangedWeapon)){
+				//clear charged shot if no RangedWeapons are equipped
 				hero.buff(ChargedShot.class).detach();
 			}
 			return true;
@@ -63,7 +51,7 @@ public class Crossbow extends MeleeWeapon {
 
 	@Override
 	public float accuracyFactor(Char owner, Char target) {
-		if (owner.buff(Crossbow.ChargedShot.class) != null){
+		if (owner.buff(RangedWeapon.ChargedShot.class) != null){
 			Actor.add(new Actor() {
 				{ actPriority = VFX_PRIO; }
 				@Override
@@ -98,7 +86,7 @@ public class Crossbow extends MeleeWeapon {
 					true,
 					true,
 					this);
-			attacker.buff(Crossbow.ChargedShot.class).detach();
+			attacker.buff(RangedWeapon.ChargedShot.class).detach();
 		}
 		return dmg;
 	}
@@ -107,7 +95,7 @@ public class Crossbow extends MeleeWeapon {
 	public int max(int lvl) {
 		return  4*(tier+1) +    //20 base, down from 25
 				lvl*(tier);     //+4 per level, down from +5
-	}
+	}							//this will be great
 
 	@Override
 	protected void duelistAbility(Hero hero, Integer target) {

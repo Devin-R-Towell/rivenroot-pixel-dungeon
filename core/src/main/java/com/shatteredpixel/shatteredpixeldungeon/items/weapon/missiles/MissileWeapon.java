@@ -53,26 +53,26 @@ abstract public class MissileWeapon extends Weapon {
 	{
 		stackable = true;
 		levelKnown = true;
-		
+
 		bones = true;
 
 		defaultAction = AC_THROW;
 		usesTargeting = true;
 	}
-	
+
 	protected boolean sticky = true;
-	
+
 	public static final float MAX_DURABILITY = 100;
 	protected float durability = MAX_DURABILITY;
 	protected float baseUses = 10;
-	
+
 	public boolean holster;
-	
+
 	//used to reduce durability from the source weapon stack, rather than the one being thrown.
 	protected MissileWeapon parent;
-	
+
 	public int tier;
-	
+
 	@Override
 	public int min() {
 		if (Dungeon.hero != null){
@@ -81,13 +81,13 @@ abstract public class MissileWeapon extends Weapon {
 			return Math.max(0 , min( buffedLvl() ));
 		}
 	}
-	
+
 	@Override
 	public int min(int lvl) {
 		return  2 * tier +                      //base
 				(tier == 1 ? lvl : 2*lvl);      //level scaling
 	}
-	
+
 	@Override
 	public int max() {
 		if (Dungeon.hero != null){
@@ -96,13 +96,13 @@ abstract public class MissileWeapon extends Weapon {
 			return Math.max(0 , max( buffedLvl() ));
 		}
 	}
-	
+
 	@Override
 	public int max(int lvl) {
 		return  5 * tier +                      //base
 				(tier == 1 ? 2*lvl : tier*lvl); //level scaling
 	}
-	
+
 	public int STRReq(int lvl){
 		return STRReq(tier, lvl) - 1; //1 less str than normal for their tier
 	}
@@ -115,7 +115,7 @@ abstract public class MissileWeapon extends Weapon {
 			return super.buffedLvl();
 		}
 	}
-	
+
 	@Override
 	//FIXME some logic here assumes the items are in the player's inventory. Might need to adjust
 	public Item upgrade() {
@@ -124,9 +124,9 @@ abstract public class MissileWeapon extends Weapon {
 			if (quantity > 1) {
 				MissileWeapon upgraded = (MissileWeapon) split(1);
 				upgraded.parent = null;
-				
+
 				upgraded = (MissileWeapon) upgraded.upgrade();
-				
+
 				//try to put the upgraded into inventory, if it didn't already merge
 				if (upgraded.quantity() == 1 && !upgraded.collect()) {
 					Dungeon.level.drop(upgraded, Dungeon.hero.pos);
@@ -135,7 +135,7 @@ abstract public class MissileWeapon extends Weapon {
 				return upgraded;
 			} else {
 				super.upgrade();
-				
+
 				Item similar = Dungeon.hero.belongings.getSimilar(this);
 				if (similar != null){
 					detach(Dungeon.hero.belongings.backpack);
@@ -146,7 +146,7 @@ abstract public class MissileWeapon extends Weapon {
 				updateQuickslot();
 				return this;
 			}
-			
+
 		} else {
 			return super.upgrade();
 		}
@@ -158,7 +158,7 @@ abstract public class MissileWeapon extends Weapon {
 		actions.remove( AC_EQUIP );
 		return actions;
 	}
-	
+
 	@Override
 	public boolean collect(Bag container) {
 		if (container instanceof MagicalHolster) holster = true;
@@ -168,13 +168,13 @@ abstract public class MissileWeapon extends Weapon {
 	public boolean isSimilar( Item item ) {
 		return level() == item.level() && getClass() == item.getClass();
 	}
-	
+
 	@Override
 	public int throwPos(Hero user, int dst) {
 
 		boolean projecting = hasEnchant(Projecting.class, user);
 		if (!projecting && Random.Int(3) < user.pointsInTalent(Talent.SHARED_ENCHANTMENT)){
-			if (this instanceof Dart && ((Dart) this).crossbowHasEnchant(Dungeon.hero)){
+			if (this instanceof Dart && ((Dart) this).rangedWeaponHasEnchant(Dungeon.hero)){
 				//do nothing
 			} else {
 				SpiritBow bow = Dungeon.hero.belongings.getItem(SpiritBow.class);
@@ -256,7 +256,7 @@ abstract public class MissileWeapon extends Weapon {
 	@Override
 	public int proc(Char attacker, Char defender, int damage) {
 		if (attacker == Dungeon.hero && Random.Int(3) < Dungeon.hero.pointsInTalent(Talent.SHARED_ENCHANTMENT)){
-			if (this instanceof Dart && ((Dart) this).crossbowHasEnchant(Dungeon.hero)){
+			if (this instanceof Dart && ((Dart) this).rangedWeaponHasEnchant(Dungeon.hero)){
 				//do nothing
 			} else {
 				SpiritBow bow = Dungeon.hero.belongings.getItem(SpiritBow.class);

@@ -94,6 +94,8 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.TimeZone;
 
+import sun.jvm.hotspot.debugger.cdbg.CDebugger;
+
 public class Dungeon {
 
 	//enum of items which have limited spawns, records how many have spawned

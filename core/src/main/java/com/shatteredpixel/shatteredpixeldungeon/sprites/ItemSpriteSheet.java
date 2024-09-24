@@ -218,12 +218,14 @@ public class ItemSpriteSheet {
 	public static final int RAPIER          = WEP_TIER1+3;
 	public static final int DAGGER          = WEP_TIER1+4;
 	public static final int MAGES_STAFF     = WEP_TIER1+5;
+	public static final int SLINGSHOT		= WEP_TIER1+6;
 	static{
 		assignItemRect(WORN_SHORTSWORD, 13, 13);
 		assignItemRect(GLOVES,          12, 16);
 		assignItemRect(RAPIER,          13, 14);
 		assignItemRect(DAGGER,          12, 13);
 		assignItemRect(MAGES_STAFF,     15, 16);
+		assignItemRect(SLINGSHOT,		15, 16);
 	}
 
 	private static final int WEP_TIER2      =                               xy(9, 7);   //8 slots
@@ -264,7 +266,7 @@ public class ItemSpriteSheet {
 	public static final int FLAIL           = WEP_TIER4+2;
 	public static final int RUNIC_BLADE     = WEP_TIER4+3;
 	public static final int ASSASSINS_BLADE = WEP_TIER4+4;
-	public static final int CROSSBOW        = WEP_TIER4+5;
+	public static final int HEAVYCROSSBOW   = WEP_TIER4+5;
 	public static final int KATANA          = WEP_TIER4+6;
 	static{
 		assignItemRect(LONGSWORD,       15, 15);
@@ -272,7 +274,7 @@ public class ItemSpriteSheet {
 		assignItemRect(FLAIL,           14, 14);
 		assignItemRect(RUNIC_BLADE,     14, 14);
 		assignItemRect(ASSASSINS_BLADE, 14, 15);
-		assignItemRect(CROSSBOW,        15, 15);
+		assignItemRect(HEAVYCROSSBOW,   15, 15);
 		assignItemRect(KATANA,          15, 16);
 	}
 
@@ -647,10 +649,28 @@ public class ItemSpriteSheet {
 			assignItemRect(i, 12, 14);
 
 		assignItemRect(BREW_AQUA, 9, 11);
-	}
-	
-	                                                                                    //16 free slots
-	
+	}																						   //13 used
+	private static final int FRUIT               =                         xy(1, 26);  //16 slots
+	public static final int FRUIT_ROTBERRY       = FRUIT+0;
+	public static final int FRUIT_FIREBLOOM      = FRUIT+1;
+	public static final int FRUIT_SWIFTTHISTLE   = FRUIT+2;
+	public static final int FRUIT_SUNGRASS       = FRUIT+3;
+	public static final int FRUIT_ICECAP         = FRUIT+4;
+	public static final int FRUIT_STORMVINE      = FRUIT+5;
+	public static final int FRUIT_SORROWMOSS     = FRUIT+6;
+	public static final int FRUIT_MAGEROYAL 	 = FRUIT+7;
+	public static final int FRUIT_EARTHROOT      = FRUIT+8;
+	public static final int FRUIT_STARFLOWER     = FRUIT+9;
+	public static final int FRUIT_FADELEAF       = FRUIT+10;
+	public static final int FRUIT_BLINDWEED      = FRUIT+11;
+	public static final int FRUIT_GLOWBERRIES	 = FRUIT+12;
+	static{
+		for (int i = FRUIT; i < FRUIT+16; i++)
+			assignItemRect(i, 10, 10);
+	}                                                                                   //16 free slots
+
+
+
 	private static final int SPELLS         =                               xy(1, 27);  //16 slots
 	public static final int WILD_ENERGY     = SPELLS+0;
 	public static final int PHASE_SHIFT     = SPELLS+1;

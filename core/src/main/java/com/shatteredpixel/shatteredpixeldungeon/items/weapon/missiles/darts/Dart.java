@@ -30,7 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Crossbow;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.RangedWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
@@ -78,7 +78,7 @@ public class Dart extends MissileWeapon {
 	@Override
 	public int min(int lvl) {
 		if (bow != null){
-			if (!(this instanceof TippedDart) && Dungeon.hero.buff(Crossbow.ChargedShot.class) != null){
+			if (!(this instanceof TippedDart) && Dungeon.hero.buff(RangedWeapon.ChargedShot.class) != null){
 				//ability increases base dmg by 37.5%, scaling by 50%
 				return  7 +                     //7 base
 						2*bow.buffedLvl() + lvl;//+2 per bow level, +1 per level
@@ -95,7 +95,7 @@ public class Dart extends MissileWeapon {
 	@Override
 	public int max(int lvl) {
 		if (bow != null){
-			if (!(this instanceof TippedDart) && Dungeon.hero.buff(Crossbow.ChargedShot.class) != null){
+			if (!(this instanceof TippedDart) && Dungeon.hero.buff(RangedWeapon.ChargedShot.class) != null){
 				//ability increases base dmg by 37.5%, scaling by 50%
 				return  15 +                       //15 base
 						4*bow.buffedLvl() + 2*lvl; //+4 per bow level, +2 per level
@@ -109,22 +109,22 @@ public class Dart extends MissileWeapon {
 		}
 	}
 	
-	protected static Crossbow bow;
+	protected static RangedWeapon bow;
 	
-	private void updateCrossbow(){
+	private void updateRangedWeapon(){
 		if (Dungeon.hero == null) {
 			bow = null;
-		} else if (Dungeon.hero.belongings.weapon() instanceof Crossbow){
-			bow = (Crossbow) Dungeon.hero.belongings.weapon();
-		} else if (Dungeon.hero.belongings.secondWep() instanceof Crossbow) {
+		} else if (Dungeon.hero.belongings.weapon() instanceof RangedWeapon){
+			bow = (RangedWeapon) Dungeon.hero.belongings.weapon();
+		} else if (Dungeon.hero.belongings.secondWep() instanceof RangedWeapon) {
 			//player can instant swap anyway, so this is just QoL
-			bow = (Crossbow) Dungeon.hero.belongings.secondWep();
+			bow = (RangedWeapon) Dungeon.hero.belongings.secondWep();
 		} else {
 			bow = null;
 		}
 	}
 
-	public boolean crossbowHasEnchant( Char owner ){
+	public boolean rangedWeaponHasEnchant( Char owner ){
 		return bow != null && bow.enchantment != null && owner.buff(MagicImmune.class) == null;
 	}
 	
@@ -140,7 +140,7 @@ public class Dart extends MissileWeapon {
 	@Override
 	public float accuracyFactor(Char owner, Char target) {
 		//don't update xbow here, as dart is the active weapon atm
-		if (bow != null && owner.buff(Crossbow.ChargedShot.class) != null){
+		if (bow != null && owner.buff(RangedWeapon.ChargedShot.class) != null){
 			return Char.INFINITE_ACCURACY;
 		} else {
 			return super.accuracyFactor(owner, target);
@@ -162,13 +162,13 @@ public class Dart extends MissileWeapon {
 
 	@Override
 	public int throwPos(Hero user, int dst) {
-		updateCrossbow();
+		updateRangedWeapon();
 		return super.throwPos(user, dst);
 	}
 
 	@Override
 	protected void onThrow(int cell) {
-		updateCrossbow();
+		updateRangedWeapon();
 		//we have to set this here, as on-hit effects can move the target we aim at
 		chargedShotPos = cell;
 		super.onThrow(cell);
@@ -179,7 +179,7 @@ public class Dart extends MissileWeapon {
 	protected void processChargedShot( Char target, int dmg ){
 		//don't update xbow here, as dart may be the active weapon atm
 		processingChargedShot = true;
-		if (chargedShotPos != -1 && bow != null && Dungeon.hero.buff(Crossbow.ChargedShot.class) != null) {
+		if (chargedShotPos != -1 && bow != null && Dungeon.hero.buff(RangedWeapon.ChargedShot.class) != null) {
 			PathFinder.buildDistanceMap(chargedShotPos, Dungeon.level.passable, 3);
 			//necessary to clone as some on-hit effects use Pathfinder
 			int[] distance = PathFinder.distance.clone();
@@ -208,14 +208,14 @@ public class Dart extends MissileWeapon {
 	@Override
 	protected void decrementDurability() {
 		super.decrementDurability();
-		if (Dungeon.hero.buff(Crossbow.ChargedShot.class) != null) {
-			Dungeon.hero.buff(Crossbow.ChargedShot.class).detach();
+		if (Dungeon.hero.buff(RangedWeapon.ChargedShot.class) != null) {
+			Dungeon.hero.buff(RangedWeapon.ChargedShot.class).detach();
 		}
 	}
 
 	@Override
 	public void throwSound() {
-		updateCrossbow();
+		updateRangedWeapon();
 		if (bow != null) {
 			Sample.INSTANCE.play(Assets.Sounds.ATK_CROSSBOW, 1, Random.Float(0.87f, 1.15f));
 		} else {
@@ -225,7 +225,7 @@ public class Dart extends MissileWeapon {
 	
 	@Override
 	public String info() {
-		updateCrossbow();
+		updateRangedWeapon();
 		if (bow != null && !bow.isIdentified()){
 			int level = bow.level();
 			//temporarily sets the level of the bow to 0 for IDing purposes

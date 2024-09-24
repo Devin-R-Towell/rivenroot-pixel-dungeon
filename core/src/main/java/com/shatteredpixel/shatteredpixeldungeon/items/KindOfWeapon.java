@@ -221,8 +221,8 @@ abstract public class KindOfWeapon extends EquipableItem {
 		}
 	}
 
-	public int min(){
-		return min(buffedLvl());
+	public int min() {
+	return min(buffedLvl());
 	}
 
 	public int max(){

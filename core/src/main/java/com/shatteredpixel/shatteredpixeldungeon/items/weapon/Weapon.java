@@ -90,6 +90,7 @@ abstract public class Weapon extends KindOfWeapon {
 			damageFactor = dmg;
 			delayFactor = dly;
 		}
+		public static int INFINITE_DAMAGE = 1_000_000;
 
 		public int damageFactor(int dmg){
 			return Math.round(dmg * damageFactor);
@@ -99,7 +100,7 @@ abstract public class Weapon extends KindOfWeapon {
 			return dly * delayFactor;
 		}
 	}
-	
+
 	public Augment augment = Augment.NONE;
 	
 	private static final int USES_TO_ID = 20;
@@ -155,7 +156,8 @@ abstract public class Weapon extends KindOfWeapon {
 	private static final String MASTERY_POTION_BONUS = "mastery_potion_bonus";
 	private static final String AUGMENT	        = "augment";
 
-	@Override
+	public static int INFINITE_DR_ROLL = 1_000_000;
+
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
 		bundle.put( USES_LEFT_TO_ID, usesLeftToID );
