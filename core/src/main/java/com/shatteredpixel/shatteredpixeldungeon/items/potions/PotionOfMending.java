@@ -56,7 +56,7 @@ public class PotionOfMending extends Potion {
         } else {
             //starts out healing 30 hp, equalizes with hero health total at level 11
             Healing healing = Buff.affect(ch, Healing.class);
-            healing.setHeal((int) (ch.HT * 0.5F), 0.1f, 15);
+            healing.setHeal((int) (ch.HT * 0.5F), 0.1f, 0);
             healing.applyVialEffect();
             if (ch == Dungeon.hero){
                 GLog.p( Messages.get(PotionOfMending.class, "heal") );

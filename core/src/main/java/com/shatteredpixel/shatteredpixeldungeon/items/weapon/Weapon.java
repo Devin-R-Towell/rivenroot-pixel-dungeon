@@ -78,7 +78,7 @@ import java.util.Arrays;
 
 abstract public class Weapon extends KindOfWeapon {
 
-	protected static final String AC_REFORGE      = "REFORGe";
+	protected static final String AC_REFORGE      = "REFORGE";
 
 	public float    ACC = 1f;	// Accuracy modifier
 	public float	DLY	= 1f;	// Speed modifier
@@ -118,7 +118,7 @@ abstract public class Weapon extends KindOfWeapon {
 	public boolean curseInfusionBonus = false;
 	public boolean masteryPotionBonus = false;
 
-	protected WornShortsword sword;
+	protected WornShortsword csword;
 
 	
 	@Override
@@ -177,8 +177,8 @@ abstract public class Weapon extends KindOfWeapon {
 		bundle.put( ENCHANT_HARDENED, enchantHardened );
 		bundle.put( CURSE_INFUSION_BONUS, curseInfusionBonus );
 		bundle.put( MASTERY_POTION_BONUS, masteryPotionBonus );
+
 		bundle.put( AUGMENT, augment );
-		bundle.put( SWORD, sword );
 	}
 	
 	@Override
@@ -187,11 +187,10 @@ abstract public class Weapon extends KindOfWeapon {
 		usesLeftToID = bundle.getFloat( USES_LEFT_TO_ID );
 		availableUsesToID = bundle.getFloat( AVAILABLE_USES );
 		enchantment = (Enchantment)bundle.get( ENCHANTMENT );
-		enchant((Weapon.Enchantment) bundle.get(ENCHANTMENT));
+		enchant((Weapon.Enchantment) bundle.get( ENCHANTMENT ));
 		enchantHardened = bundle.getBoolean( ENCHANT_HARDENED );
 		curseInfusionBonus = bundle.getBoolean( CURSE_INFUSION_BONUS );
 		masteryPotionBonus = bundle.getBoolean( MASTERY_POTION_BONUS );
-		sword = (WornShortsword)bundle.get(SWORD);
 
 		augment = bundle.getEnum(AUGMENT, Augment.class);
 	}
@@ -201,39 +200,24 @@ abstract public class Weapon extends KindOfWeapon {
 		super.reset();
 		usesLeftToID = USES_TO_ID;
 		availableUsesToID = USES_TO_ID/2f;
-		sword = null;
-	}
-	@Override
-	public ArrayList<String> actions(Hero hero) {
-		ArrayList<String> actions = super.actions(hero);
-		if (sword != null) actions.add(AC_REFORGE);
-		return actions;
+		csword = null;
 	}
 
-	@Override
-	public void execute(Hero hero, String action) {
-
-		super.execute(hero, action);
-
-		if (action.equals(AC_REFORGE) && sword != null){
-			WornShortsword reforgeing = sword;
-			sword = null;
-
-			if (reforgeing.level() > 0){
-				degrade();
-			}
-			if (reforgeing.canTransferEnchantment()){
-				enchant(null);
-			} else {
-				reforgeing.setEnchantment(null);
-			}
-			GLog.i( Messages.get(Armor.class, "detach_seal") );
-			hero.sprite.operate(hero.pos);
-			if (!reforgeing.collect()){
-				Dungeon.level.drop(reforgeing, hero.pos);
-			}
-			updateQuickslot();
+	public void reforgeSword(WornShortsword csword){
+		this.csword = csword;
+		if (csword.level() > 0){
+			//doesn't trigger upgrading logic such as affecting curses/glyphs
+			int newLevel = trueLevel()+1;
+			level(newLevel);
+			Badges.validateItemLevelAquired(this);
 		}
+		if (csword.getEnchantment() != null){
+			enchant(csword.getEnchantment());
+		}
+	}
+
+	public WornShortsword checkSword(){
+		return csword;
 	}
 
 	@Override
@@ -276,23 +260,6 @@ abstract public class Weapon extends KindOfWeapon {
 		}
 
 		return encumbrance > 0 ? (float)(ACC / Math.pow( 1.5, encumbrance )) : ACC;
-	}
-
-	public void reforgeSword(WornShortsword sword){
-		this.sword = sword;
-		if (sword.level() > 0){
-			//doesn't trigger upgrading logic such as affecting curses/glyphs
-			int newLevel = trueLevel()+1;
-			level(newLevel);
-			Badges.validateItemLevelAquired(this);
-		}
-		if (sword.getEnchantment() != null){
-			enchant(sword.getEnchantment());
-		}
-	}
-
-	public WornShortsword checkSword(){
-		return sword;
 	}
 
 	@Override
@@ -388,10 +355,10 @@ abstract public class Weapon extends KindOfWeapon {
 		
 		cursed = false;
 
-		if (sword != null && sword.level() == 0)
-			sword.upgrade();
-
+		if (csword != null && csword.level() == 0)
+			csword.upgrade();
 		return super.upgrade();
+
 	}
 
 
@@ -437,15 +404,21 @@ abstract public class Weapon extends KindOfWeapon {
 		if (ench == null || !ench.curse()) curseInfusionBonus = false;
 		enchantment = ench;
 		updateQuickslot();
-		//this is wear we attatch the reforge sword proc
-		if (sword != null) {
-			sword.setEnchantment(enchantment);
+		//this is wear we activate the reforge sword proc
+		//this is also were the sword should be being deleted.
+		if (csword != null) {
+			csword.setEnchantment(enchantment);
+			csword.detach(Dungeon.hero.belongings.backpack);
+
 		}
 		if (ench != null && isIdentified() && Dungeon.hero != null
 				&& Dungeon.hero.isAlive() && Dungeon.hero.belongings.contains(this)){
 			Catalog.setSeen(ench.getClass());
+			csword.detach(Dungeon.hero.belongings.backpack);
+
 		}
 		return this;
+
 	}
 
 	public Weapon enchant() {

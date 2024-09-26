@@ -270,7 +270,7 @@ public class Dungeon {
 		branch = 0;
 		generatedLevels.clear();
 
-		gold = 1000;
+		gold = 0;
 		energy = 0;
 
 		droppedItems = new SparseArray<>();
@@ -431,7 +431,7 @@ public class Dungeon {
 	}
 	
 	public static boolean shopOnLevel() {
-		return depth == 1 || depth == 6 || depth == 11 || depth == 16;
+		return depth == 6 || depth == 11 || depth == 16;
 	}
 	
 	public static boolean bossLevel() {
