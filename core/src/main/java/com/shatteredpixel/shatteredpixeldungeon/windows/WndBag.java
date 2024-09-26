@@ -49,6 +49,7 @@ import com.watabou.input.PointerEvent;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
+import com.watabou.utils.Bundle;
 import com.watabou.utils.PointF;
 
 public class WndBag extends WndTabbed {
@@ -478,5 +479,11 @@ public class WndBag extends WndTabbed {
 		}
 		public abstract boolean itemSelectable( Item item );
 		public abstract void onSelect( Item item );
-	}
+
+        public void storeInBundle(Bundle bundle) {
+        }
+
+        public void restoreFromBundle(Bundle bundle) {
+        }
+    }
 }

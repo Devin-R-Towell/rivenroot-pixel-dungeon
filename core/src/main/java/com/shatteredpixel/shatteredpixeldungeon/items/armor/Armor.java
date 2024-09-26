@@ -739,6 +739,7 @@ public class Armor extends EquipableItem {
 
 		@Override
 		public void storeInBundle( Bundle bundle ) {
+
 		}
 		
 		public abstract ItemSprite.Glowing glowing();

@@ -270,7 +270,7 @@ public class Dungeon {
 		branch = 0;
 		generatedLevels.clear();
 
-		gold = 0;
+		gold = 1000;
 		energy = 0;
 
 		droppedItems = new SparseArray<>();

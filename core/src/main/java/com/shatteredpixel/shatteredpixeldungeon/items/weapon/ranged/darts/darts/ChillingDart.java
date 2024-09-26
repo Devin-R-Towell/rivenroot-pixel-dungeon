@@ -19,26 +19,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts;
+package com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts.darts;
 
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Chill;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
-public class ParalyticDart extends TippedDart {
+public class ChillingDart extends TippedDart {
 	
 	{
-		image = ItemSpriteSheet.PARALYTIC_DART;
+		image = ItemSpriteSheet.CHILLING_DART;
 	}
 	
 	@Override
-	public int proc( Char attacker, Char defender, int damage ) {
-		//when processing charged shot, only stun enemies
+	public int proc(Char attacker, Char defender, int damage) {
+
+		//when processing charged shot, only chill enemies
 		if (!processingChargedShot || attacker.alignment != defender.alignment) {
-			Buff.prolong(defender, Paralysis.class, 5f);
+			if (Dungeon.level.water[defender.pos]) {
+				Buff.prolong(defender, Chill.class, Chill.DURATION);
+			} else {
+				Buff.prolong(defender, Chill.class, 6f);
+			}
 		}
-		return super.proc( attacker, defender, damage );
+		
+		return super.proc(attacker, defender, damage);
 	}
-	
 }

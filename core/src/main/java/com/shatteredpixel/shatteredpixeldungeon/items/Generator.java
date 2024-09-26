@@ -143,7 +143,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfTransfusion;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfWarding;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.AssassinsBlade;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.BattleAxe;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.HeavyCrossbow;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.RangedWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.HeavyCrossbow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Dagger;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Dirk;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Flail;
@@ -189,7 +190,9 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingSp
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingStone;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.Tomahawk;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.Trident;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.Dart;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.LightCrossbow;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts.darts.Dart;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts.darts.TippedDart;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Blindweed;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Earthroot;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Fadeleaf;
@@ -233,7 +236,12 @@ public class Generator {
 		MIS_T3  ( 0, 0, MissileWeapon.class ),
 		MIS_T4  ( 0, 0, MissileWeapon.class ),
 		MIS_T5  ( 0, 0, MissileWeapon.class ),
-		
+
+		RANGED 	( 1, 2, RangedWeapon.class ),
+		RAN_T1  ( 0, 0, RangedWeapon.class ),
+		RAN_T2  ( 0, 0, RangedWeapon.class ),
+		RAN_T3  ( 0, 0, RangedWeapon.class ),
+
 		WAND	( 1, 1, Wand.class ),
 		RING	( 1, 0, Ring.class ),
 		ARTIFACT( 0, 1, Artifact.class),
@@ -291,7 +299,7 @@ public class Generator {
 		private static HashMap<Class, ArrayList<Class>> subOrderings = new HashMap<>();
 		static {
 			subOrderings.put(Trinket.class, new ArrayList<>(Arrays.asList(Trinket.class, TrinketCatalyst.class)));
-			subOrderings.put(MissileWeapon.class, new ArrayList<>(Arrays.asList(MissileWeapon.class, Bomb.class)));
+			subOrderings.put(MissileWeapon.class, new ArrayList<>(Arrays.asList(MissileWeapon.class, RangedWeapon.class, Bomb.class)));
 			subOrderings.put(Potion.class, new ArrayList<>(Arrays.asList(Waterskin.class, Potion.class, ExoticPotion.class, Brew.class, Elixir.class, LiquidMetal.class)));
 			subOrderings.put(Scroll.class, new ArrayList<>(Arrays.asList(Scroll.class, ExoticScroll.class, Spell.class, ArcaneResin.class)));
 		}
@@ -465,7 +473,6 @@ public class Generator {
 					Flail.class,
 					RunicBlade.class,
 					AssassinsBlade.class,
-					HeavyCrossbow.class,
 					Katana.class
 			};
 			WEP_T4.defaultProbs = new float[]{ 2, 2, 2, 2, 2, 2, 2 };
@@ -505,10 +512,9 @@ public class Generator {
 			MIS_T1.classes = new Class<?>[]{
 					ThrowingStone.class,
 					ThrowingKnife.class,
-					ThrowingSpike.class,
-					Dart.class
+					ThrowingSpike.class
 			};
-			MIS_T1.defaultProbs = new float[]{ 3, 3, 3, 0 };
+			MIS_T1.defaultProbs = new float[]{ 3, 3, 3, };
 			MIS_T1.probs = MIS_T1.defaultProbs.clone();
 			
 			MIS_T2.classes = new Class<?>[]{
@@ -542,7 +548,33 @@ public class Generator {
 			};
 			MIS_T5.defaultProbs = new float[]{ 3, 3, 3 };
 			MIS_T5.probs = MIS_T5.defaultProbs.clone();
-			
+
+			RANGED.classes = new Class<?>[]{
+					HeavyCrossbow.class,
+					Dart.class
+			};
+			RANGED.defaultProbs  = new float[]{ 2, 2 };
+			RANGED.defaultProbs2 = new float[]{ 2, 2 };
+			RANGED.probs = RANGED.defaultProbs.clone();
+
+			RAN_T1.classes = new Class<?>[] {
+					Dart.class
+			};
+			RAN_T1.defaultProbs  = new float[]{ 1 };
+			RAN_T1.probs = RAN_T1.defaultProbs.clone();
+
+			RAN_T2.classes = new Class<?>[] {
+					TippedDart.class
+			};
+			RAN_T2.defaultProbs  = new float[]{ 1 };
+			RAN_T2.probs = RAN_T2.defaultProbs.clone();
+
+			RAN_T3.classes = new Class<?>[] {
+					LightCrossbow.class
+			};
+			RAN_T3.defaultProbs  = new float[]{ 1 };
+			RAN_T3.probs = RAN_T3.defaultProbs.clone();
+
 			FOOD.classes = new Class<?>[]{
 					Food.class,
 					Pasty.class,
@@ -562,7 +594,7 @@ public class Generator {
 					RingOfMight.class,
 					RingOfSharpshooting.class,
 					RingOfTenacity.class,
-					RingOfWealth.class};
+					RingOfWealth.class };
 			RING.defaultProbs = new float[]{ 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3 };
 			RING.probs = RING.defaultProbs.clone();
 			
@@ -709,6 +741,8 @@ public class Generator {
 				return randomWeapon();
 			case MISSILE:
 				return randomMissile();
+			case RANGED:
+				return randomRanged();
 			case ARTIFACT:
 				Item item = randomArtifact();
 				//if we're out of artifacts, return a ring instead.
@@ -751,8 +785,10 @@ public class Generator {
 	public static Item randomUsingDefaults( Category cat ){
 		if (cat == Category.WEAPON){
 			return randomWeapon(true);
-		} else if (cat == Category.MISSILE){
+		} else if (cat == Category.MISSILE) {
 			return randomMissile(true);
+		} else if (cat == Category.RANGED) {
+			return randomRanged(true);
 		} else if (cat.defaultProbs == null || cat == Category.ARTIFACT) {
 			return random(cat);
 		} else if (cat.defaultProbsTotal != null){
@@ -841,6 +877,36 @@ public class Generator {
 			w = (MissileWeapon)randomUsingDefaults(misTiers[Random.chances(floorSetTierProbs[floorSet])]);
 		} else {
 			w = (MissileWeapon)random(misTiers[Random.chances(floorSetTierProbs[floorSet])]);
+		}
+		return w;
+	}
+
+	public static final Category[] ranTiers = new Category[]{
+			Category.RAN_T1,
+			Category.RAN_T2,
+			Category.RAN_T3
+	};
+	public static RangedWeapon randomRanged(){
+		return randomRanged(Dungeon.depth / 5);
+	}
+
+	public static RangedWeapon randomRanged(int floorSet) {
+		return randomRanged(floorSet, false);
+	}
+
+	public static RangedWeapon randomRanged(boolean useDefaults) {
+		return randomRanged(Dungeon.depth / 5, useDefaults);
+	}
+
+	public static RangedWeapon randomRanged(int floorSet, boolean useDefaults) {
+
+		floorSet = (int)GameMath.gate(0, floorSet, floorSetTierProbs.length-1);
+
+		RangedWeapon w;
+		if (useDefaults){
+			w = (RangedWeapon)randomUsingDefaults(ranTiers[Random.chances(floorSetTierProbs[floorSet])]);
+		} else {
+			w = (RangedWeapon)random(ranTiers[Random.chances(floorSetTierProbs[floorSet])]);
 		}
 		return w;
 	}

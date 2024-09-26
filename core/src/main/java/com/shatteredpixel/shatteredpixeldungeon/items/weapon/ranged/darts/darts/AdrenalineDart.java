@@ -19,30 +19,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts;
+package com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts.darts;
 
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Adrenaline;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Chill;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
-public class ChillingDart extends TippedDart {
+public class AdrenalineDart extends TippedDart {
 	
 	{
-		image = ItemSpriteSheet.CHILLING_DART;
+		image = ItemSpriteSheet.ADRENALINE_DART;
 	}
 	
 	@Override
 	public int proc(Char attacker, Char defender, int damage) {
 
-		//when processing charged shot, only chill enemies
-		if (!processingChargedShot || attacker.alignment != defender.alignment) {
-			if (Dungeon.level.water[defender.pos]) {
-				Buff.prolong(defender, Chill.class, Chill.DURATION);
-			} else {
-				Buff.prolong(defender, Chill.class, 6f);
-			}
+		if (processingChargedShot && defender == attacker) {
+			//do nothing to the hero when processing charged shot
+		} else if (attacker.alignment == defender.alignment){
+			Buff.prolong( defender, Adrenaline.class, Adrenaline.DURATION);
+			return 0;
+		} else {
+			Buff.prolong( defender, Cripple.class, Cripple.DURATION/2);
 		}
 		
 		return super.proc(attacker, defender, damage);

@@ -116,7 +116,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Shocki
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Sickle;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.ShockingDart;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts.darts.ShockingDart;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Door;
@@ -542,6 +542,7 @@ public abstract class Char extends Actor {
 	public static int INFINITE_ACCURACY = 1_000_000;
 	public static int INFINITE_EVASION = 1_000_000;
 
+
 	final public static boolean hit(Char attacker, Char defender, boolean magic) {
 		return hit(attacker, defender, magic ? 2f : 1f, magic);
 	}
@@ -603,9 +604,6 @@ public abstract class Char extends Actor {
 		return 0;
 	}
 
-	public int damageSkill() {
-		return 0;
-	}
 
 	public String defenseVerb() {
 		return Messages.get(this, "def_verb");

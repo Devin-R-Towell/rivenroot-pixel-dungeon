@@ -19,21 +19,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee;
+package com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts.darts;
 
-import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Poison;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
-public class HeavyCrossbow extends RangedWeapon {
-
+public class PoisonDart extends TippedDart {
+	
 	{
-		image = ItemSpriteSheet.HEAVYCROSSBOW;
-		hitSound = Assets.Sounds.HIT;
-		hitSoundPitch = 1f;
+		image = ItemSpriteSheet.POISON_DART;
+	}
+	
+	@Override
+	public int proc(Char attacker, Char defender, int damage) {
 
-		//check Dart.class for additional properties
-		//This is an exsperiment.
-
-		tier = 4;
+		//when processing charged shot, only poison enemies
+		if (!processingChargedShot || attacker.alignment != defender.alignment) {
+			Buff.affect(defender, Poison.class).set(3 + Dungeon.scalingDepth() / 2);
+		}
+		
+		return super.proc(attacker, defender, damage);
 	}
 }

@@ -285,8 +285,7 @@ public class SpiritBow extends Weapon {
 		return false;
 	}
 	
-	public SpiritArrow knockArrow(){
-		return new SpiritArrow();
+	public SpiritArrow knockArrow(){return new SpiritArrow();
 	}
 	
 	public class SpiritArrow extends MissileWeapon {
