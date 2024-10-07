@@ -11,8 +11,9 @@ we curently are only in beta,  you can either build the game yourself from this 
 
 If you like this game, please consider [supporting me on Patreon](Page Not Finished
 
-The game also has a translation project hosted on [Transifex](https://www.transifex.com/shattered-pixel/shattered-pixel-dungeon/).
-ALthough future translations are not garenteed. Although I do plan on eventualy updating translations for right now we mostly only support english as it is my native language
+The Shattered Pixel dungeon game also has a translation project hosted on [Transifex](https://www.transifex.com/shattered-pixel/shattered-pixel-dungeon/).
+ALthough future translations are not garenteed. 
+Although I do plan on eventualy updating translations for right now we mostly only support english as it is my native language, I do wish to set up my own Transifex page but right now I do no't directly have one.
 
 Note that **this repository does not accept pull requests!** The code here is provided in hopes that others may find it useful for their own projects, not to allow community contribution. Issue reports of all kinds (bug reports, feature requests, etc.) are welcome.
 
