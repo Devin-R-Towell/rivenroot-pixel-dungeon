@@ -68,7 +68,21 @@ public class Sungrass extends Plant {
 			bones = true;
 		}
 	}
-	
+
+	public static class Fruit extends Plant.Fruit {
+		{
+			image = ItemSpriteSheet.FRUIT_SUNGRASS;
+
+			seedClass = Sungrass.Seed.class;
+
+			triggerBuff = "Sungrass";
+		}
+
+		public String desc() {
+			return "This berry appears to have a mild ability to heal lost health.";
+		}
+	}
+
 	public static class Health extends Buff {
 		
 		private static final float STEP = 1f;

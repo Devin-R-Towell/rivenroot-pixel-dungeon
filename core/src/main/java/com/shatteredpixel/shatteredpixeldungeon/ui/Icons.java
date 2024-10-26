@@ -97,6 +97,8 @@ public enum Icons {
 	STAIRS_SECRETS,
 	WELL_HEALTH,
 	WELL_AWARENESS,
+	WELL_TRANSMUTATION,
+	WELL_UPGRADE,
 	SACRIFICE_ALTAR,
 	DISTANT_WELL,
 
@@ -319,6 +321,12 @@ public enum Icons {
 				break;
 			case WELL_AWARENESS:
 				icon.frame( icon.texture.uvRectBySize( 144, 64, 16, 16 ) );
+				break;
+			case WELL_TRANSMUTATION:
+				icon.frame( icon.texture.uvRectBySize( 192, 64, 16, 16) );
+                break;
+			case WELL_UPGRADE:
+				icon.frame( icon.texture.uvRectBySize( 208, 64, 16, 16) );
 				break;
 			case SACRIFICE_ALTAR:
 				icon.frame( icon.texture.uvRectBySize( 160, 64, 16, 16 ) );

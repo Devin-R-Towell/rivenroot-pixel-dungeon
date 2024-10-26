@@ -61,4 +61,18 @@ public class Sorrowmoss extends Plant {
 			plantClass = Sorrowmoss.class;
 		}
 	}
+
+	public static class Fruit extends Plant.Fruit {
+		{
+			image = ItemSpriteSheet.FRUIT_SORROWMOSS;
+
+			seedClass = Sorrowmoss.Seed.class;
+
+			triggerBuff = "Sorrowmoss";
+		}
+
+		public String desc() {
+			return "This noxious berry temporarily imbues you with poisonous power, your attacks deal extra poison damage..";
+		}
+	}
 }

@@ -36,6 +36,7 @@ public class Kunai extends MissileWeapon {
 		hitSoundPitch = 1.1f;
 		
 		tier = 3;
+		weaponType = DAGGER;
 		baseUses = 5;
 	}
 	

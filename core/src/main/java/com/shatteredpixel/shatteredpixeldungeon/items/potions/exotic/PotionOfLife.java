@@ -38,7 +38,7 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 public class PotionOfLife extends ExoticPotion {
 
     {
-        icon = ItemSpriteSheet.Icons.POTION_MENDING;
+        icon = ItemSpriteSheet.Icons.POTION_LIFE;
 
         bones = true;
     }
@@ -53,7 +53,8 @@ public class PotionOfLife extends ExoticPotion {
         if (ch == Dungeon.hero && Dungeon.isChallenged(Challenges.NO_HEALING)){
             pharmacophobiaProc(Dungeon.hero);
         } else {
-            //heals you for full health and gives you ~30% shield if you are the hero.
+            //heals you for full health and cures all negative status effects
+            // then gives you ~30% shielding if you are the hero.
             Healing healing = Buff.affect(ch, Healing.class);
             healing.setHeal((int) (ch.HT * 1.0f), 1.0f, 0);
             healing.applyVialEffect();
@@ -77,5 +78,10 @@ public class PotionOfLife extends ExoticPotion {
     @Override
     public int value() {
         return isKnown() ? 30 * quantity : super.value();
+    }
+
+    @Override
+    public int energyVal() {
+        return quantity * 16;
     }
 }

@@ -21,8 +21,14 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+
 public class Speed extends FlavourBuff {
 	
 	public static final float DURATION = 10f;
-	
+
+	@Override
+	public void onDetach(Char target){
+		Buff.affect(target, Slow.class);
+	}
 }

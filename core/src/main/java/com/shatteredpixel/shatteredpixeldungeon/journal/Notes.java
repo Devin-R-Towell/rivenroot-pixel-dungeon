@@ -27,6 +27,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Foliage;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SacrificialFire;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.WaterOfAwareness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.WaterOfHealth;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.WaterOfTransmutation;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.WaterOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.DemonSpawner;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Statue;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Blacksmith;
@@ -123,7 +125,9 @@ public class Notes {
 		GARDEN,
 		DISTANT_WELL,
 		WELL_OF_HEALTH,
+		WELL_OF_TRANSMUTATION,
 		WELL_OF_AWARENESS,
+		WELL_OF_UPGRADE,
 		SACRIFICIAL_FIRE,
 		STATUE,
 		
@@ -180,6 +184,10 @@ public class Notes {
 					return Icons.get(Icons.WELL_HEALTH);
 				case WELL_OF_AWARENESS:
 					return Icons.get(Icons.WELL_AWARENESS);
+				case WELL_OF_TRANSMUTATION:
+					return Icons.get(Icons.WELL_TRANSMUTATION);
+				case WELL_OF_UPGRADE:
+					return Icons.get(Icons.WELL_UPGRADE);
 				case SACRIFICIAL_FIRE:
 					return Icons.get(Icons.SACRIFICE_ALTAR);
 				case STATUE:
@@ -229,15 +237,17 @@ public class Notes {
 				case SECRETS_FLOOR: return Messages.get(Level.Feeling.class, "secrets_desc");
 
 				case SHOP:
-					if (depth == 20)    return Messages.get(ImpShopkeeper.class, "desc");
-					else                return Messages.get(Shopkeeper.class, "desc");
-				case ALCHEMY:           return Messages.get(Level.class, "alchemy_desc");
-				case GARDEN:            return Messages.get(Foliage.class, "desc");
-				case DISTANT_WELL:      return Messages.get(WeakFloorRoom.HiddenWell.class, "desc");
-				case WELL_OF_HEALTH:    return Messages.get(WaterOfHealth.class, "desc");
-				case WELL_OF_AWARENESS: return Messages.get(WaterOfAwareness.class, "desc");
-				case SACRIFICIAL_FIRE:  return Messages.get(SacrificialFire.class, "desc");
-				case STATUE:            return Messages.get(Statue.class, "desc");
+					if (depth == 20)    	return Messages.get(ImpShopkeeper.class, "desc");
+					else                	return Messages.get(Shopkeeper.class, "desc");
+				case ALCHEMY:           	return Messages.get(Level.class, "alchemy_desc");
+				case GARDEN:            	return Messages.get(Foliage.class, "desc");
+				case DISTANT_WELL:      	return Messages.get(WeakFloorRoom.HiddenWell.class, "desc");
+				case WELL_OF_HEALTH:    	return Messages.get(WaterOfHealth.class, "desc");
+				case WELL_OF_AWARENESS: 	return Messages.get(WaterOfAwareness.class, "desc");
+				case WELL_OF_TRANSMUTATION: return Messages.get(WaterOfTransmutation.class, "desc");
+				case WELL_OF_UPGRADE:		return Messages.get(WaterOfUpgrade.class, "desc");
+				case SACRIFICIAL_FIRE:  	return Messages.get(SacrificialFire.class, "desc");
+				case STATUE:            	return Messages.get(Statue.class, "desc");
 
 				case GHOST:         return Messages.get(Ghost.class, "desc");
 				case RAT_KING:      return Messages.get(RatKing.class, "desc");

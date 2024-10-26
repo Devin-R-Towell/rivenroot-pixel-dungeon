@@ -108,6 +108,8 @@ public class Dungeon {
 		ENCH_STONE,
 		INT_STONE,
 		TRINKET_CATA,
+		BLANK_SCROLL,
+		SCROLLOFWILDGROWTH,
 		LAB_ROOM, //actually a room, but logic is the same
 
 		//Health potion sources
@@ -119,6 +121,7 @@ public class Dungeon {
 		//Demon spawners are already limited in their spawnrate, no need to limit their health drops
 		//alchemy
 		COOKING_HP,
+		COOKING_UP,
 		BLANDFRUIT_SEED,
 
 		//Other limited enemy drops
@@ -526,6 +529,17 @@ public class Dungeon {
 		dropped.add( item );
 	}
 
+	public static boolean sowLimit() {
+		int sowLeftThisRun = 4 - LimitedDrops.SCROLLOFWILDGROWTH.count;
+		if (sowLeftThisRun <= 0) return false;
+
+		if (Random.Int(16) == sowLeftThisRun && sowLeftThisRun > 0){
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public static boolean posNeeded() {
 		//2 POS each floor set
 		int posLeftThisSet = 2 - (LimitedDrops.STRENGTH_POTIONS.count - (depth / 5) * 2);
@@ -545,14 +559,35 @@ public class Dungeon {
 	public static boolean souNeeded() {
 		int souLeftThisSet;
 		//3 SOU each floor set
-		souLeftThisSet = 3 - (LimitedDrops.UPGRADE_SCROLLS.count - (depth / 5) * 3);
+		souLeftThisSet = 5 - (LimitedDrops.UPGRADE_SCROLLS.count - (depth / 5) * 5);
 		if (souLeftThisSet <= 0) return false;
 
 		int floorThisSet = (depth % 5);
 		//chance is floors left / scrolls left
 		return Random.Int(5 - floorThisSet) < souLeftThisSet;
 	}
-	
+
+	public static boolean bsNeeded() {
+		int bsLeftThisSet;
+
+		bsLeftThisSet = 3 - (LimitedDrops.BLANK_SCROLL.count - (depth / 5) * 3);
+		if (bsLeftThisSet <= 0) return false;
+
+		int floorThisSet = (depth % 5);
+		//chance is floors left / scrolls left
+		return Random.Int(5 - floorThisSet) < bsLeftThisSet;
+	}
+
+
+	public static boolean enchStoneNeeded() {
+		int etLeftThisSet;
+		etLeftThisSet = 2 - (LimitedDrops.ENCH_STONE.count - (depth/5) * 2);
+		if (etLeftThisSet <=0) return false;
+
+		int floorThisSet = (depth % 5);
+		return Random.Int(5 - floorThisSet) < etLeftThisSet;
+	}
+
 	public static boolean asNeeded() {
 		//1 AS each floor set
 		int asLeftThisSet = 1 - (LimitedDrops.ARCANE_STYLI.count - (depth / 5));
@@ -561,19 +596,6 @@ public class Dungeon {
 		int floorThisSet = (depth % 5);
 		//chance is floors left / scrolls left
 		return Random.Int(5 - floorThisSet) < asLeftThisSet;
-	}
-
-	public static boolean enchStoneNeeded(){
-		//1 enchantment stone, spawns on chapter 2 or 3
-		if (!LimitedDrops.ENCH_STONE.dropped()){
-			int region = 1+depth/5;
-			if (region > 1){
-				int floorsVisited = depth - 5;
-				if (floorsVisited > 4) floorsVisited--; //skip floor 10
-				return Random.Int(9-floorsVisited) == 0; //1/8 chance each floor
-			}
-		}
-		return false;
 	}
 
 	public static boolean intStoneNeeded(){

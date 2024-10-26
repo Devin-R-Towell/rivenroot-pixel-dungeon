@@ -36,6 +36,7 @@ public class Tomahawk extends MissileWeapon {
 
 		tier = 4;
 		baseUses = 5;
+		weaponType = AXE;
 	}
 
 	@Override

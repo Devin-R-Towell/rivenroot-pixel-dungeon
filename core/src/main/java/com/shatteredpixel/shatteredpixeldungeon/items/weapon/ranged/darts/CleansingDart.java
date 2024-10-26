@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts.darts;
+package com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -28,7 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ChampionEnemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfCleansing;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.HeavyCrossbow;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.RangedWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
 public class CleansingDart extends TippedDart {
@@ -49,7 +49,7 @@ public class CleansingDart extends TippedDart {
 			for (Buff b : defender.buffs()){
 				if (!(b instanceof ChampionEnemy)
 						&& b.type == Buff.buffType.POSITIVE
-						&& !(b instanceof HeavyCrossbow.ChargedShot)){
+						&& !(b instanceof RangedWeapon.ChargedShot)){
 					b.detach();
 				}
 			}

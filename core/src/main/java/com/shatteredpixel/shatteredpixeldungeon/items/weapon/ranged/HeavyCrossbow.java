@@ -22,7 +22,6 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.RangedWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
 public class HeavyCrossbow extends RangedWeapon {
@@ -36,5 +35,7 @@ public class HeavyCrossbow extends RangedWeapon {
 		//This is an exsperiment.
 
 		tier = 4;
+		weaponType = BOW;
+		weaponHand = TWO_HANDED;
 	}
 }

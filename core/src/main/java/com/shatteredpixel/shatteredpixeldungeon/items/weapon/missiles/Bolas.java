@@ -35,6 +35,8 @@ public class Bolas extends MissileWeapon {
 		hitSoundPitch = 1f;
 		
 		tier = 3;
+		weaponType = MISC;
+
 		baseUses = 5;
 	}
 	

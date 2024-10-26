@@ -53,7 +53,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.bombs.RegrowthBomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.ShockBomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.ShrapnelBomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.bombs.WoollyBomb;
-import com.shatteredpixel.shatteredpixeldungeon.items.food.Berry;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Blandfruit;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.ChargrilledMeat;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
@@ -111,8 +110,9 @@ import com.shatteredpixel.shatteredpixeldungeon.items.spells.WildEnergy;
 import com.shatteredpixel.shatteredpixeldungeon.items.trinkets.TrinketCatalyst;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts.darts.TippedDart;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts.TippedDart;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
 import com.watabou.utils.Bundle;
 
 import java.util.ArrayList;
@@ -189,6 +189,7 @@ public enum Catalog {
 		MELEE_WEAPONS.addItems(Generator.Category.WEP_T3.classes);
 		MELEE_WEAPONS.addItems(Generator.Category.WEP_T4.classes);
 		MELEE_WEAPONS.addItems(Generator.Category.WEP_T5.classes);
+		MELEE_WEAPONS.addItems(Generator.Category.WEP_T6.classes);
 
 		ARMOR.addItems(Generator.Category.ARMOR.classes);
 
@@ -230,7 +231,7 @@ public enum Catalog {
 		STONES.addItems(Generator.Category.STONE.classes);
 
 		FOOD.addItems( Food.class, Pasty.class, MysteryMeat.class, ChargrilledMeat.class,
-				StewedMeat.class, FrozenCarpaccio.class, SmallRation.class, Berry.class,
+				StewedMeat.class, FrozenCarpaccio.class, SmallRation.class, Plant.Fruit.class,
 				SupplyRation.class, Blandfruit.class, PhantomMeat.class, MeatPie.class );
 
 		EXOTIC_POTIONS.addItems(ExoticPotion.exoToReg.keySet().toArray(new Class[0]));

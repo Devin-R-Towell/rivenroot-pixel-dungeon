@@ -32,6 +32,7 @@ public class ThrowingSpear extends MissileWeapon {
 		hitSoundPitch = 1f;
 		
 		tier = 3;
+		weaponType = POLEARM;
 	}
 	
 }

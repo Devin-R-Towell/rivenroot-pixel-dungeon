@@ -36,29 +36,29 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.watabou.utils.Bundle;
 
 public class Earthroot extends Plant {
-	
+
 	{
 		image = 8;
 		seedClass = Seed.class;
 	}
-	
-	@Override
-	public void activate( Char ch ) {
 
-		if (ch != null){
+	@Override
+	public void activate(Char ch) {
+
+		if (ch != null) {
 			if (ch instanceof Hero && ((Hero) ch).subClass == HeroSubClass.WARDEN) {
 				Barkskin.conditionallyAppend(Dungeon.hero, Dungeon.hero.lvl + 5, 5);
 			} else {
 				Buff.affect(ch, Armor.class).level(ch.HT);
 			}
 		}
-		
+
 		if (Dungeon.level.heroFOV[pos]) {
-			CellEmitter.bottom( pos ).start( EarthParticle.FACTORY, 0.05f, 8 );
-			PixelScene.shake( 1, 0.4f );
+			CellEmitter.bottom(pos).start(EarthParticle.FACTORY, 0.05f, 8);
+			PixelScene.shake(1, 0.4f);
 		}
 	}
-	
+
 	public static class Seed extends Plant.Seed {
 		{
 			image = ItemSpriteSheet.SEED_EARTHROOT;
@@ -68,11 +68,25 @@ public class Earthroot extends Plant {
 			bones = true;
 		}
 	}
-	
+
+	public static class Fruit extends Plant.Fruit {
+		{
+			image = ItemSpriteSheet.FRUIT_EARTHROOT;
+
+			seedClass = Earthroot.Seed.class;
+
+			bones = true;
+
+		}
+		public String desc() {
+			return "Eating this berry will thicken your skin to become as hard a bark. Temporarily shielding you.";
+		}
+	}
+
 	public static class Armor extends Buff {
-		
+
 		private static final float STEP = 1f;
-		
+
 		private int pos;
 		private int level;
 
@@ -80,26 +94,26 @@ public class Earthroot extends Plant {
 			type = buffType.POSITIVE;
 			announced = true;
 		}
-		
+
 		@Override
 		public boolean act() {
 			if (target.pos != pos) {
 				detach();
 			}
-			spend( STEP );
+			spend(STEP);
 			return true;
 		}
-		
-		private static int blocking(){
-			return (Dungeon.scalingDepth() + 5)/2;
+
+		private static int blocking() {
+			return (Dungeon.scalingDepth() + 5) / 2;
 		}
-		
-		public int absorb( int damage ) {
-			if (pos != target.pos){
+
+		public int absorb(int damage) {
+			if (pos != target.pos) {
 				detach();
 				return damage;
 			}
-			int block = Math.min( damage, blocking());
+			int block = Math.min(damage, blocking());
 			if (level <= block) {
 				detach();
 				return damage - block;
@@ -108,8 +122,8 @@ public class Earthroot extends Plant {
 				return damage - block;
 			}
 		}
-		
-		public void level( int value ) {
+
+		public void level(int value) {
 			if (target != null) {
 				if (level < value) {
 					level = value;
@@ -117,7 +131,7 @@ public class Earthroot extends Plant {
 				pos = target.pos;
 			}
 		}
-		
+
 		@Override
 		public int icon() {
 			return BuffIndicator.ARMOR;
@@ -138,21 +152,21 @@ public class Earthroot extends Plant {
 			return Messages.get(this, "desc", blocking(), level);
 		}
 
-		private static final String POS		= "pos";
-		private static final String LEVEL	= "level";
-		
+		private static final String POS = "pos";
+		private static final String LEVEL = "level";
+
 		@Override
-		public void storeInBundle( Bundle bundle ) {
-			super.storeInBundle( bundle );
-			bundle.put( POS, pos );
-			bundle.put( LEVEL, level );
+		public void storeInBundle(Bundle bundle) {
+			super.storeInBundle(bundle);
+			bundle.put(POS, pos);
+			bundle.put(LEVEL, level);
 		}
-		
+
 		@Override
-		public void restoreFromBundle( Bundle bundle ) {
-			super.restoreFromBundle( bundle );
-			pos = bundle.getInt( POS );
-			level = bundle.getInt( LEVEL );
+		public void restoreFromBundle(Bundle bundle) {
+			super.restoreFromBundle(bundle);
+			pos = bundle.getInt(POS);
+			level = bundle.getInt(LEVEL);
 		}
 	}
 }

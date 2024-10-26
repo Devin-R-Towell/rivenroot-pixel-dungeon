@@ -32,6 +32,7 @@ public class Javelin extends MissileWeapon {
 		hitSoundPitch = 1f;
 		
 		tier = 4;
+		weaponType = POLEARM;
 	}
 	
 }

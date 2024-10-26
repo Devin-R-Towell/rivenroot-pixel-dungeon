@@ -62,4 +62,17 @@ public class Firebloom extends Plant {
 			plantClass = Firebloom.class;
 		}
 	}
+	public static class Fruit extends Plant.Fruit {
+		{
+			image = ItemSpriteSheet.FRUIT_FIREBLOOM;
+
+			seedClass = Firebloom.Seed.class;
+
+			triggerBuff = "FireBloom";
+		}
+
+		public String desc() {
+			return "Eating this berry imbues you with fire. Your attacks deal extra fire damage.";
+		}
+	}
 }

@@ -157,9 +157,7 @@ public class HornOfPlenty extends Artifact {
 	}
 
 	@Override
-	protected ArtifactBuff passiveBuff() {
-		return new hornRecharge();
-	}
+	protected ArtifactBuff passiveBuff() { return new hornRecharge(); }
 	
 	@Override
 	public void charge(Hero target, float amount) {

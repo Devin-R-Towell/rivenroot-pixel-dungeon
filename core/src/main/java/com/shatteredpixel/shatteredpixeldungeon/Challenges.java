@@ -25,6 +25,9 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 
 public class Challenges {
+	//TODO make a version of this for making the game "easier
+	//TODO a difficulty scaling system. Ranging from baby - Saturn'sNightmare
+	//note most of the difficulty scaling will be put into the mob class files.
 
 	//Some of these internal IDs are outdated and don't represent what these challenges do
 	public static final int NO_FOOD				= 1;

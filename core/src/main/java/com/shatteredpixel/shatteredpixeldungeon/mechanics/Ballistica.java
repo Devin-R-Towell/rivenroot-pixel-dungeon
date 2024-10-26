@@ -43,13 +43,143 @@ public class Ballistica {
 	public static final int STOP_CHARS = 2;     //ballistica will stop on first char hit
 	public static final int STOP_SOLID = 4;     //ballistica will stop on solid terrain
 	public static final int IGNORE_SOFT_SOLID = 8; //ballistica will ignore soft solid terrain, such as doors and webs
+	public static final double MaxVel = 60.0;
+	public static final double MinVel = 20.0;
+
 
 	public static final int PROJECTILE =  	STOP_TARGET	| STOP_CHARS	| STOP_SOLID;
 
 	public static final int MAGIC_BOLT =    STOP_CHARS  | STOP_SOLID;
 
-	public static final int WONT_STOP =     0;
+	public static final int WONT_STOP =     0; 
 
+	private void buildRicochet(int from, int to1, int to2, boolean stopTarget, boolean stopChars, boolean stopTerrain, boolean ignoreSoftSolid ) {
+		int w = Dungeon.level.width();
+
+		// First path from 'from' to 'to1'
+		int x0 = from % w;
+		int x1 = to1 % w;
+		int y0 = from / w;
+		int y1 = to1 / w;
+
+		int dx1 = x1 - x0;
+		int dy1 = y1 - y0;
+
+		int stepX1 = dx1 > 0 ? +1 : -1;
+		int stepY1 = dy1 > 0 ? +1 : -1;
+
+		dx1 = Math.abs(dx1);
+		dy1 = Math.abs(dy1);
+
+		int stepA, stepB, dA, dB;
+
+		if (dx1 > dy1) {
+			stepA = stepX1;
+			stepB = stepY1 * w;
+			dA = dx1;
+			dB = dy1;
+		} else {
+			stepA = stepY1 * w;
+			stepB = stepX1;
+			dA = dy1;
+			dB = dx1;
+		}
+
+		int cell = from;
+		int err = dA / 2;
+		while (Dungeon.level.insideMap(cell)) {
+			path.add(cell);
+
+			// Check for collision conditions
+			if (stopTerrain && cell != sourcePos && Dungeon.level.solid[cell]) {
+				// Ricochet logic
+				int ricochetDest = RicochetCalc(from, to1);
+				build(from, ricochetDest, stopTarget, stopChars, stopTerrain, ignoreSoftSolid);
+				to1 = ricochetDest; // Adjust for ricochet
+				break;
+			}
+
+			path.add(cell);
+
+			if (collisionPos == null && stopTerrain && cell != sourcePos && Dungeon.level.solid[cell]) {
+				if (ignoreSoftSolid && (Dungeon.level.passable[cell] || Dungeon.level.avoid[cell])) {
+					// Do nothing for soft solids
+				} else {
+					collide(cell);
+					break;
+				}
+			}
+			if (collisionPos == null && cell != sourcePos && stopChars && Actor.findChar(cell) != null) {
+				collide(cell);
+				break;
+			}
+			if (collisionPos == null && cell == to1 && stopTarget) {
+				collide(cell);
+				break;
+			}
+
+			cell += stepA;
+			err += dB;
+			if (err >= dA) {
+				err = err - dA;
+				cell += stepB;
+			}
+		}
+
+		// Second path from 'to1' to 'to2' (after ricochet)
+		if (collisionPos != null || cell == to1) {
+			build(to1, to2, stopTarget, stopChars, stopTerrain, ignoreSoftSolid);
+		}
+	}
+
+	public static int RicochetCalc(int from, int to) {
+		int w = Dungeon.level.width();
+		int x0 = from % w;
+		int y0 = from / w;
+		int x1 = to % w;
+		int y1 = to / w;
+		int xDiff = x1 - x0;
+		int yDiff = y1 - y0;
+		double initAngle = Math.toDegrees(Math.atan2(yDiff, xDiff));
+
+		int cPos = to; // Assuming 'to' is the collision position
+		if (cPos == 0) return -1; // No collision
+
+		int cX = cPos % w;
+		int cY = cPos / w;
+
+		double rAngle = initAngle;
+		if (xDiff != 0 && (cX <= 0 || cX >= w - 1)) {
+			rAngle = 180 - rAngle; // Reflect horizontally
+		}
+		if (yDiff != 0 && (cY <= 0 || cY >= Dungeon.level.height() - 1)) { // Correct height check
+			rAngle = -rAngle; // Reflect vertically
+		}
+
+		double distance = Math.sqrt(Math.pow(xDiff, 2) + Math.pow(yDiff, 2));
+		double vel = distance / 5.0; // Better velocity calculation based on distance
+
+		vel = Math.min(MaxVel, Math.max(MinVel, vel)); // Clamp velocity
+
+		double rX = cX + vel * Math.cos(Math.toRadians(rAngle));
+		double rY = cY + vel * Math.sin(Math.toRadians(rAngle));
+		int nextX = (int) rX;
+		int nextY = (int) rY;
+
+		// Ensure the next coordinates are within bounds
+		if (Math.abs(xDiff) > Math.abs(yDiff)) {
+			if (rAngle > 0 && nextX >= w - 1) nextX = w - 1;
+			else if (rAngle < 0 && nextX <= 0) nextX = 0;
+			nextY = (int) (cY + (nextX - cX) * Math.tan(Math.toRadians(rAngle)));
+		} else {
+			if ((rAngle > 90 || rAngle < -90) && nextY >= Dungeon.level.height() - 1)
+				nextY = Dungeon.level.height() - 1;
+			else if (rAngle < 90 && nextY <= 0) nextY = 0;
+			nextX = (int) (cX + (nextY - cY) / Math.tan(Math.toRadians(rAngle)));
+		}
+
+		return nextY * w + nextX;
+	}
 
 	public Ballistica( int from, int to, int params ){
 		sourcePos = from;

@@ -32,6 +32,7 @@ public class ThrowingHammer extends MissileWeapon {
 		hitSoundPitch = 0.8f;
 		
 		tier = 5;
+		weaponType = BLUDGEON;
 		baseUses = 15;
 		sticky = false;
 	}

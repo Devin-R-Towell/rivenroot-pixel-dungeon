@@ -80,8 +80,10 @@ public abstract class InventoryScroll extends Scroll {
 	protected boolean usableOnItem( Item item ){
 		return true;
 	}
-	
+
 	protected abstract void onItemSelected( Item item );
+
+	public void forceRead(Item item) { onItemSelected(item); }
 	
 	protected WndBag.ItemSelector itemSelector = new WndBag.ItemSelector() {
 

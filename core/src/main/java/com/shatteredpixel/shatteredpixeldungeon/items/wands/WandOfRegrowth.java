@@ -437,9 +437,8 @@ public class WandOfRegrowth extends Wand {
 			return Dungeon.level.trueDistance(this.pos, pos) <= wandLvl;
 		}
 
-		public float seedPreservation(){
-			return Math.min( 1f, 0.40f + 0.04f*wandLvl );
-		}
+		public float seedPreservation(){ return Math.min( 1f, 0.40f + 0.04f*wandLvl ); }
+
 
 		@Override
 		public boolean canInteract(Char c) {

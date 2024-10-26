@@ -19,44 +19,42 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts.darts;
+package com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bless;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Electricity;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Lightning;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
+import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
-public class HolyDart extends TippedDart {
+import java.util.ArrayList;
 
+public class ShockingDart extends TippedDart {
+	
 	{
-		image = ItemSpriteSheet.HOLY_DART;
+		image = ItemSpriteSheet.SHOCKING_DART;
 	}
 	
 	@Override
 	public int proc(Char attacker, Char defender, int damage) {
 
-		//do nothing to the hero when processing charged shot
-		if (processingChargedShot && defender == attacker){
-			return super.proc(attacker, defender, damage);
-		}
+		//when processing charged shot, only shock enemies
+		if (!processingChargedShot || attacker.alignment != defender.alignment) {
+			defender.damage(Random.NormalIntRange(5 + Dungeon.scalingDepth() / 4, 10 + Dungeon.scalingDepth() / 4), new Electricity());
 
-		if (attacker.alignment == defender.alignment){
-			Buff.affect(defender, Bless.class, Math.round(Bless.DURATION));
-			return 0;
-		}
-
-		if (Char.hasProp(defender, Char.Property.UNDEAD) || Char.hasProp(defender, Char.Property.DEMONIC)){
-			defender.sprite.emitter().start( ShadowParticle.UP, 0.05f, 10+buffedLvl() );
-			Sample.INSTANCE.play(Assets.Sounds.BURNING);
-			defender.damage(Random.NormalIntRange(10 + Dungeon.scalingDepth()/3, 20 + Dungeon.scalingDepth()/3), this);
-		//also do not bless enemies if processing charged shot
-		} else if (!processingChargedShot){
-			Buff.affect(defender, Bless.class, Math.round(Bless.DURATION));
+			CharSprite s = defender.sprite;
+			if (s != null && s.parent != null) {
+				ArrayList<Lightning.Arc> arcs = new ArrayList<>();
+				arcs.add(new Lightning.Arc(new PointF(s.x, s.y + s.height / 2), new PointF(s.x + s.width, s.y + s.height / 2)));
+				arcs.add(new Lightning.Arc(new PointF(s.x + s.width / 2, s.y), new PointF(s.x + s.width / 2, s.y + s.height)));
+				s.parent.add(new Lightning(arcs, null));
+				Sample.INSTANCE.play(Assets.Sounds.LIGHTNING);
+			}
 		}
 		
 		return super.proc(attacker, defender, damage);

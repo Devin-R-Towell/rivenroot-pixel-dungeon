@@ -34,6 +34,9 @@ public class Gauntlet extends MeleeWeapon {
 		hitSoundPitch = 1.2f;
 		
 		tier = 5;
+		weaponType = FIST;
+		weaponHand = TWO_HANDED;
+
 		DLY = 0.5f; //2x speed
 	}
 	

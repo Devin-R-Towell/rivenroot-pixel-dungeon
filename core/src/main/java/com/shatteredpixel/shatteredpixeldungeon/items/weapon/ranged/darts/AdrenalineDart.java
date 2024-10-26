@@ -19,37 +19,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts.darts;
+package com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts;
 
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Adrenaline;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Healing;
-import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
-public class HealingDart extends TippedDart {
+public class AdrenalineDart extends TippedDart {
 	
 	{
-		image = ItemSpriteSheet.HEALING_DART;
+		image = ItemSpriteSheet.ADRENALINE_DART;
 	}
 	
 	@Override
 	public int proc(Char attacker, Char defender, int damage) {
 
-		//do nothing to the hero or enemies when processing charged shot
-		if (processingChargedShot && (defender == attacker || attacker.alignment != defender.alignment)){
-			return super.proc(attacker, defender, damage);
-		}
-		
-		//heals 30 hp at base, scaling with enemy HT
-		PotionOfHealing.cure( defender );
-		Buff.affect( defender, Healing.class ).setHeal((int)(0.5f*defender.HT + 30), 0.25f, 0);
-		
-		if (attacker.alignment == defender.alignment){
+		if (processingChargedShot && defender == attacker) {
+			//do nothing to the hero when processing charged shot
+		} else if (attacker.alignment == defender.alignment){
+			Buff.prolong( defender, Adrenaline.class, Adrenaline.DURATION);
 			return 0;
+		} else {
+			Buff.prolong( defender, Cripple.class, Cripple.DURATION/2);
 		}
 		
 		return super.proc(attacker, defender, damage);
 	}
-	
 }

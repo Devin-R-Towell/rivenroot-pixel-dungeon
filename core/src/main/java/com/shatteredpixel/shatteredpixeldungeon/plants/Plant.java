@@ -22,17 +22,35 @@
 package com.shatteredpixel.shatteredpixeldungeon.plants;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barkskin;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.BlobImmunity;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FireImbue;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FrostImbue;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Haste;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Healing;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Levitation;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Light;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.StrengthBuff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ToxicImbue;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
+import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.LeafParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfRegrowth;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Bestiary;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
@@ -40,7 +58,10 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
@@ -51,143 +72,158 @@ import com.watabou.utils.Reflection;
 import java.util.ArrayList;
 
 public abstract class Plant implements Bundlable {
-	
+
 	public int image;
+
 	public int pos;
 
 	protected Class<? extends Plant.Seed> seedClass;
+	protected Class<? extends Plant.Fruit> fruitClass;
 
-	public void trigger(){
+	public void trigger() {
 
 		Char ch = Actor.findChar(pos);
 
-		if (ch instanceof Hero){
+		if (ch instanceof Hero) {
 			((Hero) ch).interrupt();
 		}
 
-		if (Dungeon.level.heroFOV[pos] && Dungeon.hero.hasTalent(Talent.NATURES_AID)){
+		if (Dungeon.level.heroFOV[pos] && Dungeon.hero.hasTalent(Talent.NATURES_AID)) {
 			// 3/5 turns based on talent points spent
-			Barkskin.conditionallyAppend(Dungeon.hero, 2, 1 + 2*(Dungeon.hero.pointsInTalent(Talent.NATURES_AID)));
+			Barkskin.conditionallyAppend(Dungeon.hero, 2, 1 + 2 * (Dungeon.hero.pointsInTalent(Talent.NATURES_AID)));
 		}
 
 		wither();
-		activate( ch );
+		activate(ch);
 		Bestiary.setSeen(getClass());
 		Bestiary.countEncounter(getClass());
 	}
-	
-	public abstract void activate( Char ch );
-	
+
+	public abstract void activate(Char ch);
+
 	public void wither() {
-		Dungeon.level.uproot( pos );
+		Dungeon.level.uproot(pos);
 
 		if (Dungeon.level.heroFOV[pos]) {
-			CellEmitter.get( pos ).burst( LeafParticle.GENERAL, 6 );
+			CellEmitter.get(pos).burst(LeafParticle.GENERAL, 6);
 		}
 
 		float seedChance = 0f;
-		for (Char c : Actor.chars()){
-			if (c instanceof WandOfRegrowth.Lotus){
+		float fruitChance = 0f;
+		for (Char c : Actor.chars()) {
+			if (c instanceof WandOfRegrowth.Lotus) {
 				WandOfRegrowth.Lotus l = (WandOfRegrowth.Lotus) c;
-				if (l.inRange(pos)){
+				if (l.inRange(pos)) {
 					seedChance = Math.max(seedChance, l.seedPreservation());
+					fruitChance = Math.max(fruitChance, l.seedPreservation());
 				}
 			}
 		}
 
-		if (Random.Float() < seedChance){
+		if (Random.Float() < seedChance) {
 			if (seedClass != null && seedClass != Rotberry.Seed.class) {
 				Dungeon.level.drop(Reflection.newInstance(seedClass), pos).sprite.drop();
 			}
 		}
-		
+		if (Random.Float() < fruitChance) {
+			if (fruitClass != null && fruitClass != Rotberry.Fruit.class) {
+				Dungeon.level.drop(Reflection.newInstance(fruitClass), pos).sprite.drop();
+			}
+		}
 	}
-	
-	private static final String POS	= "pos";
+
+	private static final String POS = "pos";
 
 	@Override
-	public void restoreFromBundle( Bundle bundle ) {
-		pos = bundle.getInt( POS );
+	public void restoreFromBundle(Bundle bundle) {
+		pos = bundle.getInt(POS);
 	}
 
 	@Override
-	public void storeInBundle( Bundle bundle ) {
-		bundle.put( POS, pos );
+	public void storeInBundle(Bundle bundle) {
+		bundle.put(POS, pos);
 	}
 
-	public String name(){
+	public String name() {
 		return Messages.get(this, "name");
 	}
 
 	public String desc() {
 		String desc = Messages.get(this, "desc");
-		if (Dungeon.hero != null && Dungeon.hero.subClass == HeroSubClass.WARDEN){
+		if (Dungeon.hero != null && Dungeon.hero.subClass == HeroSubClass.WARDEN) {
 			desc += "\n\n" + Messages.get(this, "warden_desc");
 		}
 		return desc;
 	}
-	
+
+	public Plant.Seed getSeed() {
+		return Reflection.newInstance(seedClass);
+	}
+
 	public static class Seed extends Item {
 
-		public static final String AC_PLANT	= "PLANT";
-		
+		public static final String AC_PLANT = "PLANT";
+
 		private static final float TIME_TO_PLANT = 1f;
-		
+
 		{
 			stackable = true;
 			defaultAction = AC_THROW;
 		}
-		
+
 		protected Class<? extends Plant> plantClass;
-		
+
+
 		@Override
-		public ArrayList<String> actions( Hero hero ) {
-			ArrayList<String> actions = super.actions( hero );
-			actions.add( AC_PLANT );
+		public ArrayList<String> actions(Hero hero) {
+			ArrayList<String> actions = super.actions(hero);
+			actions.add(AC_PLANT);
 			return actions;
 		}
-		
+
+
 		@Override
-		protected void onThrow( int cell ) {
+		protected void onThrow(int cell) {
 			if (Dungeon.level.map[cell] == Terrain.ALCHEMY
 					|| Dungeon.level.pit[cell]
 					|| Dungeon.level.traps.get(cell) != null
 					|| Dungeon.isChallenged(Challenges.NO_HERBALISM)) {
-				super.onThrow( cell );
+				super.onThrow(cell);
 			} else {
 				Catalog.countUse(getClass());
-				Dungeon.level.plant( this, cell );
+				Dungeon.level.plant(this, cell);
 				if (Dungeon.hero.subClass == HeroSubClass.WARDEN) {
 					for (int i : PathFinder.NEIGHBOURS8) {
 						int c = Dungeon.level.map[cell + i];
-						if ( c == Terrain.EMPTY || c == Terrain.EMPTY_DECO
-								|| c == Terrain.EMBERS || c == Terrain.GRASS){
+						if (c == Terrain.EMPTY || c == Terrain.EMPTY_DECO
+								|| c == Terrain.EMBERS || c == Terrain.GRASS) {
 							Level.set(cell + i, Terrain.FURROWED_GRASS);
 							GameScene.updateMap(cell + i);
-							CellEmitter.get( cell + i ).burst( LeafParticle.LEVEL_SPECIFIC, 4 );
+							CellEmitter.get(cell + i).burst(LeafParticle.LEVEL_SPECIFIC, 4);
+
 						}
 					}
 				}
 			}
 		}
-		
+
 		@Override
-		public void execute( Hero hero, String action ) {
+		public void execute(Hero hero, String action) {
 
-			super.execute (hero, action );
+			super.execute(hero, action);
 
-			if (action.equals( AC_PLANT )) {
+			if (action.equals(AC_PLANT)) {
 
 				hero.busy();
-				((Seed)detach( hero.belongings.backpack )).onThrow( hero.pos );
-				hero.spend( TIME_TO_PLANT );
+				((Seed) detach(hero.belongings.backpack)).onThrow(hero.pos);
+				hero.spend(TIME_TO_PLANT);
 
-				hero.sprite.operate( hero.pos );
-				
+				hero.sprite.operate(hero.pos);
+
 			}
 		}
-		
-		public Plant couch( int pos, Level level ) {
+
+		public Plant couch(int pos, Level level) {
 			if (level != null && level.heroFOV != null && level.heroFOV[pos]) {
 				Sample.INSTANCE.play(Assets.Sounds.PLANT);
 			}
@@ -195,17 +231,17 @@ public abstract class Plant implements Bundlable {
 			plant.pos = pos;
 			return plant;
 		}
-		
+
 		@Override
 		public boolean isUpgradable() {
 			return false;
 		}
-		
+
 		@Override
 		public boolean isIdentified() {
 			return true;
 		}
-		
+
 		@Override
 		public int value() {
 			return 10 * quantity;
@@ -219,7 +255,7 @@ public abstract class Plant implements Bundlable {
 		@Override
 		public String desc() {
 			String desc = Messages.get(plantClass, "desc");
-			if (Dungeon.hero != null && Dungeon.hero.subClass == HeroSubClass.WARDEN){
+			if (Dungeon.hero != null && Dungeon.hero.subClass == HeroSubClass.WARDEN) {
 				desc += "\n\n" + Messages.get(plantClass, "warden_desc");
 			}
 			return desc;
@@ -227,20 +263,168 @@ public abstract class Plant implements Bundlable {
 
 		@Override
 		public String info() {
-			return Messages.get( Seed.class, "info", super.info() );
+			return Messages.get(Seed.class, "info", super.info());
 		}
-		
+
 		public static class PlaceHolder extends Seed {
-			
+
 			{
 				image = ItemSpriteSheet.SEED_HOLDER;
 			}
-			
+
+
+
 			@Override
 			public boolean isSimilar(Item item) {
 				return item instanceof Plant.Seed;
 			}
-			
+
+			@Override
+			public String info() {
+				return "";
+			}
+		}
+	}
+
+	public static class Fruit extends Food {
+
+		{
+			stackable = true;
+			defaultAction = AC_EAT;
+			energy = Hunger.HUNGRY/4f;
+			bones = true;
+		}
+
+		protected Class<? extends Seed> seedClass;
+		protected Class<? extends Plant> plantClass;
+
+		protected String triggerBuff;
+
+		public String name() {
+			return "Berry";
+		}
+
+		protected void triggerBuff(Hero hero) {
+			if (triggerBuff != null) {
+				applyTriggerBuff(hero);
+			}
+		}
+
+		protected void applyTriggerBuff(Hero hero) {
+			try {
+				switch (triggerBuff) {
+					case "Blindweed":
+						Buff.affect(hero, Invisibility.class, Invisibility.DURATION);
+						break;
+					case "Earthroot":
+						Barkskin.conditionallyAppend(Dungeon.hero, Dungeon.hero.lvl + 5, 5);
+						break;
+					case "Fadeleaf":
+						if (Dungeon.interfloorTeleportAllowed()) {
+							Level.beforeTransition();
+							InterlevelScene.mode = InterlevelScene.Mode.RETURN;
+							InterlevelScene.returnDepth = Math.max(1, (Dungeon.depth - 1));
+							InterlevelScene.returnBranch = 0;
+							InterlevelScene.returnPos = -2;
+							Game.switchScene(InterlevelScene.class);
+						} else {
+							ScrollOfTeleportation.teleportChar(hero, Fadeleaf.class);
+						}
+						break;
+					case "FireBloom":
+						Buff.affect(hero, FireImbue.class).set(FireImbue.DURATION);
+						break;
+					case "Icecap":
+						Buff.affect(hero, FrostImbue.class, FrostImbue.DURATION);
+						break;
+					case "Mageroyal":
+						Buff.affect(hero, BlobImmunity.class, BlobImmunity.DURATION);
+						break;
+					case "Rotberry":
+						Buff.affect(hero, StrengthBuff.class);
+						break;
+					case "Sorrowmoss":
+						Buff.affect(hero, ToxicImbue.class).set(ToxicImbue.DURATION);
+						break;
+					case "Starflower":
+						Buff.prolong(hero, Recharging.class, Recharging.DURATION);
+						break;
+					case "Stormvine":
+						Buff.affect(hero, Levitation.class, Levitation.DURATION);
+						break;
+					case "Sungrass":
+						Buff.affect(hero, Healing.class).setHeal(hero.HT, 0, 5);
+						break;
+					case "Swiftthistle":
+						Buff.affect(hero, Haste.class, Haste.DURATION);
+						break;
+					case "Glowberries":
+						Buff.affect(hero, Light.class, Light.DURATION);
+						break;
+					default:
+						throw new IllegalArgumentException("Unknown triggerBuff: " + triggerBuff);
+				}
+			} catch (Exception e) {
+				Game.reportException(e);
+			}
+		}
+
+
+
+		@Override
+		protected float eatingTime() {
+			if (Dungeon.hero.hasTalent(Talent.IRON_STOMACH)
+					|| Dungeon.hero.hasTalent(Talent.ENERGIZING_MEAL)
+					|| Dungeon.hero.hasTalent(Talent.MYSTICAL_MEAL)
+					|| Dungeon.hero.hasTalent(Talent.INVIGORATING_MEAL)
+					|| Dungeon.hero.hasTalent(Talent.FOCUSED_MEAL)) {
+				return 0;
+			} else {
+				return 1;
+			}
+		}
+
+		@Override
+		public void execute(Hero hero, String action) {
+			Seed seed = Reflection.newInstance(seedClass);
+			super.execute(hero, action);
+
+			if (action.equals(AC_EAT)) {
+				triggerBuff(hero);
+				((Fruit) detach(hero.belongings.backpack)).satisfy(hero);
+				if (!(seed instanceof BlandfruitBush.Seed)) {
+					Dungeon.level.drop(seed, hero.pos);
+				}
+			}
+		}
+
+
+		@Override
+		public int value() {
+			return 15 * quantity;
+		}
+
+		@Override
+		public boolean isUpgradable() {
+			return false;
+		}
+
+		@Override
+		public boolean isIdentified() {
+			return true;
+		}
+
+		public static class PlaceHolder extends Fruit {
+
+			{
+				image = ItemSpriteSheet.FRUIT_HOLDER;
+			}
+
+			@Override
+			public boolean isSimilar(Item item) {
+				return item instanceof Plant.Fruit;
+			}
+
 			@Override
 			public String info() {
 				return "";
@@ -248,3 +432,4 @@ public abstract class Plant implements Bundlable {
 		}
 	}
 }
+

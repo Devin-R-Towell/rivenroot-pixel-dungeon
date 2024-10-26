@@ -81,4 +81,20 @@ public class Rotberry extends Plant {
 			return 3 * quantity;
 		}
 	}
+
+	public static class Fruit extends Plant.Fruit {
+		{
+			image = ItemSpriteSheet.FRUIT_ROTBERRY;
+
+			seedClass = Rotberry.Seed.class;
+
+			triggerBuff = "Rotberry";
+
+			bones = false;
+		}
+		public String desc() {
+			return "Eating this berry imbues you with temperary strenght.";
+		}
+
+	}
 }

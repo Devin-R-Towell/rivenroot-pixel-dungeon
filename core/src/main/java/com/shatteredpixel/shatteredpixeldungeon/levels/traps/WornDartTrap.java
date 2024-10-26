@@ -28,7 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ShatteredPixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts.darts.Dart;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts.Dart;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MissileSprite;
@@ -73,6 +73,7 @@ public class WornDartTrap extends Trap {
 						//invis targets are considered to be at max range
 						if (ch.invisible > 0) curDist = Math.max(curDist, range);
 						Ballistica bolt = new Ballistica(pos, ch.pos, Ballistica.PROJECTILE);
+
 						if (bolt.collisionPos == ch.pos
 								&& ( curDist < closestDist || (curDist == closestDist && target instanceof Hero))){
 							target = ch;

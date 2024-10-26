@@ -57,12 +57,14 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfInvisibili
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfLiquidFlame;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfMindVision;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfStrength;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.BlankScroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMirrorImage;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRage;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfWildgrowth;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Dagger;
@@ -108,7 +110,7 @@ public enum HeroClass {
 		Waterskin waterskin = new Waterskin();
 		waterskin.collect();
 
-		new ScrollOfIdentify().identify();
+		new BlankScroll().identify();
 
 		switch (this) {
 			case WARRIOR:
@@ -164,7 +166,7 @@ public enum HeroClass {
 		ThrowingStone stones = new ThrowingStone();
 		stones.quantity(3).collect();
 		Dungeon.quickslot.setSlot(0, stones);
-		if (hero.belongings.armor != null){
+		if (hero.belongings.armor != null) {
 			hero.belongings.armor.affixSeal(new BrokenSeal());
 			Catalog.setSeen(BrokenSeal.class); //as it's not added to the inventory
 		}
@@ -216,6 +218,7 @@ public enum HeroClass {
 		Dungeon.quickslot.setSlot(0, bow);
 
 		new PotionOfMindVision().identify();
+		new ScrollOfWildgrowth().identify();
 		new ScrollOfLullaby().identify();
 	}
 
@@ -226,6 +229,9 @@ public enum HeroClass {
 
 		ThrowingSpike spikes = new ThrowingSpike();
 		spikes.quantity(2).collect();
+
+		ThrowingStone stone = new ThrowingStone();
+		stone.quantity(3).collect();
 
 		Dungeon.quickslot.setSlot(0, hero.belongings.weapon);
 		Dungeon.quickslot.setSlot(1, spikes);

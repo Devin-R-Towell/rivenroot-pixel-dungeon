@@ -73,4 +73,18 @@ public class Starflower extends Plant {
 			return 3 * quantity;
 		}
 	}
+
+	public static class Fruit extends Plant.Fruit {
+		{
+			image = ItemSpriteSheet.FRUIT_STARFLOWER;
+
+			seedClass = Starflower.Seed.class;
+
+			triggerBuff = "Starflower";
+		}
+	}
+
+	public String desc() {
+		return "This noxious berry temporarily imbues you with poisonous power, your attacks deal extra poison damage.";
+	}
 }

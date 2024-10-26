@@ -65,6 +65,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Regeneration;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SnipersMark;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.TimeStasis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vertigo;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.StrengthBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.duelist.Challenge;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.duelist.ElementalStrike;
@@ -92,6 +93,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClassArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.glyphs.AntiMagic;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.glyphs.Brimstone;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.glyphs.Viscosity;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.AaronsHeart;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.AlchemistsToolkit;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CapeOfThorns;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
@@ -130,7 +132,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfLivingEarth;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.HeavyCrossbow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Flail;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Quarterstaff;
@@ -138,6 +139,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.RoundShield;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Sai;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Scimitar;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.RangedWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
@@ -194,7 +196,7 @@ public class Hero extends Char {
 	private static final float TIME_TO_SEARCH	    = 2f;
 	private static final float HUNGER_FOR_SEARCH	= 6f;
 	
-	public HeroClass heroClass = HeroClass.ROGUE;
+	public static HeroClass heroClass = HeroClass.ROGUE;
 	public HeroSubClass subClass = HeroSubClass.NONE;
 	public ArmorAbility armorAbility = null;
 	public ArrayList<LinkedHashMap<Talent, Integer>> talents = new ArrayList<>();
@@ -231,18 +233,23 @@ public class Hero extends Char {
 
 	public Hero() {
 		super();
-
 		HP = HT = 20;
-		STR = STARTING_STR;
-		
-		belongings = new Belongings( this );
-		
+
+		belongings = new Belongings(this);
+
 		visibleEnemies = new ArrayList<>();
+
+		if (heroClass.equals(HeroClass.WARRIOR)) {
+			STR = STARTING_STR+1;
+		} else {
+			STR = STARTING_STR;
+		}
 	}
-	
+
 	public void updateHT( boolean boostHP ){
+		AaronsHeart.HealthBonus HB = buff(AaronsHeart.HealthBonus.class);
 		int curHT = HT;
-		
+
 		HT = 20 + 5*(lvl-1) + HTBoost;
 		float multiplier = RingOfMight.HTMultiplier(this);
 		HT = Math.round(multiplier * HT);
@@ -250,10 +257,15 @@ public class Hero extends Char {
 		if (buff(ElixirOfMight.HTBoost.class) != null){
 			HT += buff(ElixirOfMight.HTBoost.class).boost();
 		}
-		
+
+		if (buff(AaronsHeart.HealthBonus.class) != null){
+			HTBoost += HB.heartBoost(HT);
+		}
+
 		if (boostHP){
 			HP += Math.max(HT - curHT, 0);
 		}
+
 		HP = Math.min(HP, HT);
 	}
 
@@ -269,6 +281,10 @@ public class Hero extends Char {
 
 		if (hasTalent(Talent.STRONGMAN)){
 			strBonus += (int)Math.floor(STR * (0.03f + 0.05f*pointsInTalent(Talent.STRONGMAN)));
+		}
+
+		if (buff(StrengthBuff.class) != null ){
+			strBonus += 2;
 		}
 
 		return STR + strBonus;
@@ -502,7 +518,7 @@ public class Hero extends Char {
 
 				if (wep instanceof Flail && buff(Flail.SpinAbilityTracker.class) != null){
 					//do nothing, this is not a regular attack so don't consume talent fx
-				} else if (wep instanceof HeavyCrossbow && buff(HeavyCrossbow.ChargedShot.class) != null){
+				} else if (wep instanceof RangedWeapon && buff(RangedWeapon.ChargedShot.class) != null){
 					//do nothing, this is not a regular attack so don't consume talent fx
 				} else if (buff(Talent.PreciseAssaultTracker.class) != null) {
 					// 2x/5x/inf. ACC for duelist if she just used a weapon ability
@@ -574,6 +590,9 @@ public class Hero extends Char {
 
 		if (belongings.armor() != null) {
 			evasion = belongings.armor().evasionFactor(this, evasion);
+		}
+		if (heroClass.equals(HeroClass.ROGUE)) {
+			evasion += 1;
 		}
 
 		return Math.round(evasion);

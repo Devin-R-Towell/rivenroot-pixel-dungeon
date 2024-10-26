@@ -21,18 +21,18 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles;
 
-import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
-import com.watabou.noosa.audio.Sample;
-import com.watabou.utils.PathFinder;
-import com.watabou.utils.Random;
 
-public class ThrowingStone extends MissileWeapon {
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts.Dart;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+
+import java.util.ArrayList;
+
+
+public class ThrowingStone extends Dart {
+
+	private static boolean ProcessingRicochet;
 
 	{
 		image = ItemSpriteSheet.THROWING_STONE;
@@ -42,10 +42,17 @@ public class ThrowingStone extends MissileWeapon {
 		bones = false;
 
 		tier = 1;
+		weaponType = BLUDGEON;
 
-		//infinite, even with penalties
-		baseUses = 1000;
+		baseUses = 5;
 		sticky = false;
+	}
+
+	@Override
+	public ArrayList<String> actions(Hero hero) {
+		ArrayList<String> actions = super.actions(hero);
+		actions.remove(AC_TIP);
+		return actions;
 	}
 
 	@Override

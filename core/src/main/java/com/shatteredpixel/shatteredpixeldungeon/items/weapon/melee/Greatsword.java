@@ -35,6 +35,8 @@ public class Greatsword extends MeleeWeapon {
 		hitSoundPitch = 1f;
 
 		tier = 5;
+		weaponType = BLADE;
+		weaponHand = TWO_HANDED;
 	}
 
 	@Override

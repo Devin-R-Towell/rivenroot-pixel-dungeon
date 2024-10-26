@@ -42,6 +42,8 @@ public class Greataxe extends MeleeWeapon {
 		hitSoundPitch = 1f;
 
 		tier = 5;
+		weaponType = AXE;
+		weaponHand = TWO_HANDED;
 	}
 
 	@Override

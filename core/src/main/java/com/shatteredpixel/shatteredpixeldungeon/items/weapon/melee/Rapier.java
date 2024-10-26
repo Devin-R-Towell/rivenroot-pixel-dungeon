@@ -47,6 +47,7 @@ public class Rapier extends MeleeWeapon {
 		hitSoundPitch = 1.3f;
 
 		tier = 1;
+		weaponType = BLADE;
 
 		bones = false;
 	}

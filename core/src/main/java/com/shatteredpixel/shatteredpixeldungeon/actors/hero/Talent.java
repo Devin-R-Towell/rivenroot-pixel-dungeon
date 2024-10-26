@@ -64,6 +64,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gloves;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.RangedWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -362,7 +363,7 @@ public enum Talent {
 		}
 	}
 	public static class CombinedLethalityAbilityTracker extends FlavourBuff{
-		public MeleeWeapon weapon;
+		public Weapon weapon;
 	};
 	public static class CombinedEnergyAbilityTracker extends FlavourBuff{
 		public boolean monkAbilused = false;

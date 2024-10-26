@@ -32,6 +32,7 @@ public class ThrowingClub extends MissileWeapon {
 		hitSoundPitch = 1.1f;
 		
 		tier = 2;
+		weaponType = BLUDGEON;
 		baseUses = 15;
 		sticky = false;
 	}

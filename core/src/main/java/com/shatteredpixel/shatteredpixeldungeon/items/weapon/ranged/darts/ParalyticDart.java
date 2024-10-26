@@ -19,28 +19,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts.darts;
+package com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts;
 
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Poison;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
-public class PoisonDart extends TippedDart {
+public class ParalyticDart extends TippedDart {
 	
 	{
-		image = ItemSpriteSheet.POISON_DART;
+		image = ItemSpriteSheet.PARALYTIC_DART;
 	}
 	
 	@Override
-	public int proc(Char attacker, Char defender, int damage) {
-
-		//when processing charged shot, only poison enemies
+	public int proc( Char attacker, Char defender, int damage ) {
+		//when processing charged shot, only stun enemies
 		if (!processingChargedShot || attacker.alignment != defender.alignment) {
-			Buff.affect(defender, Poison.class).set(3 + Dungeon.scalingDepth() / 2);
+			Buff.prolong(defender, Paralysis.class, 5f);
 		}
-		
-		return super.proc(attacker, defender, damage);
+		return super.proc( attacker, defender, damage );
 	}
+	
 }

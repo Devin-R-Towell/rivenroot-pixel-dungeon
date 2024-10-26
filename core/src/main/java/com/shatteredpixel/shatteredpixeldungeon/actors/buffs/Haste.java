@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.watabou.noosa.Image;
 
@@ -47,4 +48,8 @@ public class Haste extends FlavourBuff {
 		return Math.max(0, (DURATION - visualcooldown()) / DURATION);
 	}
 
+	@Override
+	public void onDetach(Char target){
+		Buff.affect(target, Slow.class);
+	}
 }

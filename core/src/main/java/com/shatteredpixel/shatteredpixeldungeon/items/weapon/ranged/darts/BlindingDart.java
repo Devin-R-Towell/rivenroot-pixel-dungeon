@@ -19,39 +19,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts.darts;
+package com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts;
 
-import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Blindness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corrosion;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
 
-public class RotDart extends TippedDart {
+public class BlindingDart extends TippedDart {
 	
 	{
-		image = ItemSpriteSheet.ROT_DART;
+		image = ItemSpriteSheet.BLINDING_DART;
 	}
 	
 	@Override
 	public int proc(Char attacker, Char defender, int damage) {
 
-		//when processing charged shot, only corrode enemies
-		if (processingChargedShot && attacker.alignment == defender.alignment) {
-			//do nothing
-		} else if (defender.properties().contains(Char.Property.BOSS)
-				|| defender.properties().contains(Char.Property.MINIBOSS)){
-			Buff.affect(defender, Corrosion.class).set(5f, Dungeon.scalingDepth()/3);
-		} else {
-			Buff.affect(defender, Corrosion.class).set(10f, Dungeon.scalingDepth());
+		//when processing charged shot, only blind enemies
+		if (!processingChargedShot || attacker.alignment != defender.alignment) {
+			Buff.affect(defender, Blindness.class, Blindness.DURATION);
 		}
 		
 		return super.proc(attacker, defender, damage);
-	}
-	
-	@Override
-	public float durabilityPerUse() {
-		return MAX_DURABILITY/5f; //always 5 uses
 	}
 }

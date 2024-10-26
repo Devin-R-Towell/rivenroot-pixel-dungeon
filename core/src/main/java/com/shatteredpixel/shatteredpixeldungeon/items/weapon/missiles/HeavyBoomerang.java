@@ -41,6 +41,7 @@ public class HeavyBoomerang extends MissileWeapon {
 		hitSoundPitch = 1f;
 		
 		tier = 4;
+		weaponType = BLUDGEON;
 		sticky = false;
 	}
 	

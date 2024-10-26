@@ -39,7 +39,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfSharpshooting;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Projecting;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts.darts.Dart;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts.Dart;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
@@ -67,11 +67,11 @@ abstract public class MissileWeapon extends Weapon {
 	protected float baseUses = 10;
 
 	public boolean holster;
-
 	//used to reduce durability from the source weapon stack, rather than the one being thrown.
 	protected MissileWeapon parent;
 
-	public int tier;
+
+public int tier;
 
 	@Override
 	public int min() {
@@ -246,12 +246,13 @@ abstract public class MissileWeapon extends Weapon {
 			if (!curUser.shoot( enemy, this )) {
 				rangedMiss( cell );
 			} else {
-				
+
 				rangedHit( enemy, cell );
 
 			}
 		}
 	}
+
 
 	@Override
 	public int proc(Char attacker, Char defender, int damage) {
@@ -272,7 +273,7 @@ abstract public class MissileWeapon extends Weapon {
 	@Override
 	public Item random() {
 		if (!stackable) return this;
-		
+
 		//2: 66.67% (2/3)
 		//3: 26.67% (4/15)
 		//4: 6.67%  (1/15)
@@ -290,12 +291,12 @@ abstract public class MissileWeapon extends Weapon {
 		//show quantity even when it is 1
 		return Integer.toString( quantity );
 	}
-	
+
 	@Override
 	public float castDelay(Char user, int dst) {
 		return delayFactor( user );
 	}
-	
+
 	protected void rangedHit( Char enemy, int cell ){
 		decrementDurability();
 		if (durability > 0){
@@ -310,7 +311,7 @@ abstract public class MissileWeapon extends Weapon {
 			Dungeon.level.drop( this, cell ).sprite.drop();
 		}
 	}
-	
+
 	protected void rangedMiss( int cell ) {
 		parent = null;
 		super.onThrow(cell);
@@ -324,7 +325,7 @@ abstract public class MissileWeapon extends Weapon {
 		durability += amount;
 		durability = Math.min(durability, MAX_DURABILITY);
 	}
-	
+
 	public float durabilityPerUse(){
 		//classes that override durabilityPerUse can turn rounding off, to do their own rounding after more logic
 		return durabilityPerUse(true);
@@ -355,7 +356,7 @@ abstract public class MissileWeapon extends Weapon {
 			return MAX_DURABILITY/usages;
 		}
 	}
-	
+
 	protected void decrementDurability(){
 		//if this weapon was thrown from a source stack, degrade that stack.
 		//unless a weapon is about to break, then break the one being thrown
@@ -382,11 +383,11 @@ abstract public class MissileWeapon extends Weapon {
 			}
 		}
 	}
-	
+
 	@Override
 	public int damageRoll(Char owner) {
 		int damage = augment.damageFactor(super.damageRoll( owner ));
-		
+
 		if (owner instanceof Hero) {
 			int exStr = ((Hero)owner).STR() - STRReq();
 			if (exStr > 0) {
@@ -396,16 +397,16 @@ abstract public class MissileWeapon extends Weapon {
 				damage = Math.round(damage * (1f + 0.15f * ((Hero) owner).pointsInTalent(Talent.PROJECTILE_MOMENTUM)));
 			}
 		}
-		
+
 		return damage;
 	}
-	
+
 	@Override
 	public void reset() {
 		super.reset();
 		durability = MAX_DURABILITY;
 	}
-	
+
 	@Override
 	public Item merge(Item other) {
 		super.merge(other);
@@ -419,13 +420,13 @@ abstract public class MissileWeapon extends Weapon {
 		}
 		return this;
 	}
-	
+
 	@Override
 	public Item split(int amount) {
 		bundleRestoring = true;
 		Item split = super.split(amount);
 		bundleRestoring = false;
-		
+
 		//unless the thrown weapon will break, split off a max durability item and
 		//have it reduce the durability of the main stack. Cleaner to the player this way
 		if (split != null){
@@ -433,26 +434,26 @@ abstract public class MissileWeapon extends Weapon {
 			m.durability = MAX_DURABILITY;
 			m.parent = this;
 		}
-		
+
 		return split;
 	}
-	
+
 	@Override
 	public boolean doPickUp(Hero hero, int pos) {
 		parent = null;
 		return super.doPickUp(hero, pos);
 	}
-	
+
 	@Override
 	public boolean isIdentified() {
 		return true;
 	}
-	
+
 	@Override
 	public String info() {
 
 		String info = super.info();
-		
+
 		info += "\n\n" + Messages.get( MissileWeapon.class, "stats",
 				tier,
 				Math.round(augment.damageFactor(min())),
@@ -481,9 +482,9 @@ abstract public class MissileWeapon extends Weapon {
 		}
 
 		info += "\n\n" + Messages.get(MissileWeapon.class, "distance");
-		
+
 		info += "\n\n" + Messages.get(this, "durability");
-		
+
 		if (durabilityPerUse() > 0){
 			info += " " + Messages.get(this, "uses_left",
 					(int)Math.ceil(durability/durabilityPerUse()),
@@ -491,26 +492,26 @@ abstract public class MissileWeapon extends Weapon {
 		} else {
 			info += " " + Messages.get(this, "unlimited_uses");
 		}
-		
-		
+
+
 		return info;
 	}
-	
+
 	@Override
 	public int value() {
 		return 6 * tier * quantity * (level() + 1);
 	}
-	
+
 	private static final String DURABILITY = "durability";
-	
+
 	@Override
 	public void storeInBundle(Bundle bundle) {
 		super.storeInBundle(bundle);
 		bundle.put(DURABILITY, durability);
 	}
-	
+
 	private static boolean bundleRestoring = false;
-	
+
 	@Override
 	public void restoreFromBundle(Bundle bundle) {
 		bundleRestoring = true;
@@ -525,10 +526,7 @@ abstract public class MissileWeapon extends Weapon {
 			image = ItemSpriteSheet.MISSILE_HOLDER;
 		}
 
-		@Override
-		public boolean isSimilar(Item item) {
-			return item instanceof MissileWeapon;
-		}
+
 
 		@Override
 		public String info() {

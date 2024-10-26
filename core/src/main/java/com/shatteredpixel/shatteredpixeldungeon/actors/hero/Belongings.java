@@ -87,8 +87,14 @@ public class Belongings implements Iterable<Item> {
 	//used to ensure that the duelist always uses the weapon she's using the ability of
 	public KindOfWeapon abilityWeapon = null;
 
+	//used to tag weapons that should store parent classes of MissileWeapons.
+	public KindOfWeapon rangedWeapon = null;
+
 	//used by the champion subclass
 	public KindOfWeapon secondWep = null;
+
+	//going to be used for storing parent class of Missile weapons when firing from a ranged weapon.
+	public KindOfWeapon ammo = null;
 
 	//*** these accessor methods are so that worn items can be affected by various effects/debuffs
 	// we still want to access the raw equipped items in cases where effects should be ignored though,
@@ -98,6 +104,7 @@ public class Belongings implements Iterable<Item> {
 	public KindOfWeapon attackingWeapon(){
 		if (thrownWeapon != null) return thrownWeapon;
 		if (abilityWeapon != null) return abilityWeapon;
+		if (rangedWeapon != null) return rangedWeapon;
 		return weapon();
 	}
 
@@ -159,6 +166,14 @@ public class Belongings implements Iterable<Item> {
 		}
 	}
 
+	public KindOfWeapon ammo(){
+		if (!lostInventory() || (ammo !=null && ammo.keptThroughLostInventory())){
+			return ammo;
+		} else {
+			return null;
+		}
+	}
+
 	// ***
 	
 	private static final String WEAPON		= "weapon";
@@ -166,6 +181,7 @@ public class Belongings implements Iterable<Item> {
 	private static final String ARTIFACT   = "artifact";
 	private static final String MISC       = "misc";
 	private static final String RING       = "ring";
+	private static final String AMMO	   = "ammo";
 
 	private static final String SECOND_WEP = "second_wep";
 
@@ -179,6 +195,7 @@ public class Belongings implements Iterable<Item> {
 		bundle.put( MISC, misc );
 		bundle.put( RING, ring );
 		bundle.put( SECOND_WEP, secondWep );
+		bundle.put( AMMO, ammo );
 	}
 	
 	public void restoreFromBundle( Bundle bundle ) {
@@ -203,6 +220,9 @@ public class Belongings implements Iterable<Item> {
 
 		secondWep = (KindOfWeapon) bundle.get(SECOND_WEP);
 		if (secondWep() != null)    secondWep().activate(owner);
+
+		ammo = (KindOfWeapon)		bundle.get(AMMO);
+		if (ammo() != null)			ammo.activate(owner);
 	}
 	
 	public static void preview( GamesInProgress.Info info, Bundle bundle ) {
@@ -217,6 +237,7 @@ public class Belongings implements Iterable<Item> {
 			info.armorTier = 0;
 		}
 	}
+
 
 	//ignores lost inventory debuff
 	public ArrayList<Bag> getBags(){
@@ -264,7 +285,8 @@ public class Belongings implements Iterable<Item> {
 
 		return result;
 	}
-	
+
+
 	public boolean contains( Item contains ){
 
 		boolean lostInvent = lostInventory();
@@ -279,7 +301,8 @@ public class Belongings implements Iterable<Item> {
 		
 		return false;
 	}
-	
+
+
 	public Item getSimilar( Item similar ){
 
 		boolean lostInvent = lostInventory();
@@ -291,7 +314,7 @@ public class Belongings implements Iterable<Item> {
 				}
 			}
 		}
-		
+
 		return null;
 	}
 	
@@ -310,6 +333,7 @@ public class Belongings implements Iterable<Item> {
 		
 		return result;
 	}
+
 
 	//triggers when a run ends, so ignores lost inventory effects
 	public void identify() {
@@ -342,6 +366,9 @@ public class Belongings implements Iterable<Item> {
 		if (secondWep() != null){
 			secondWep().identify();
 			Badges.validateItemLevelAquired(secondWep());
+		}
+		if (ammo() !=null){
+			ammo().identify();
 		}
 		for (Item item : backpack) {
 			if (item instanceof EquipableItem || item instanceof Wand) {
@@ -433,6 +460,8 @@ public class Belongings implements Iterable<Item> {
 			case 5:
 				equipped[5] = secondWep = null;
 				break;
+			case 6:
+				equipped[6] = ammo = null;
 			default:
 				backpackIterator.remove();
 			}

@@ -84,7 +84,7 @@ public class Potion extends Item {
 	//used internally for potions that can be drunk or thrown
 	public static final String AC_CHOOSE = "CHOOSE";
 
-	private static final float TIME_TO_DRINK = 1f;
+	public static final float TIME_TO_DRINK = 1f;
 
 	private static final LinkedHashMap<String, Integer> colors = new LinkedHashMap<String, Integer>() {
 		{
@@ -105,18 +105,18 @@ public class Potion extends Item {
 	};
 
 	protected static final HashSet<Class<?extends Potion>> mustThrowPots = new HashSet<>();
-	static{
+	static {
 		mustThrowPots.add(PotionOfToxicGas.class);
 		mustThrowPots.add(PotionOfLiquidFlame.class);
 		mustThrowPots.add(PotionOfParalyticGas.class);
 		mustThrowPots.add(PotionOfFrost.class);
-		
+
 		//exotic
 		mustThrowPots.add(PotionOfCorrosiveGas.class);
 		mustThrowPots.add(PotionOfSnapFreeze.class);
 		mustThrowPots.add(PotionOfShroudingFog.class);
 		mustThrowPots.add(PotionOfStormClouds.class);
-		
+
 		//also all brews except unstable, hardcoded
 	}
 	

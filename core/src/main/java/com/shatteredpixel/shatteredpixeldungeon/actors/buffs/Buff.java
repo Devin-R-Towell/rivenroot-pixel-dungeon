@@ -88,21 +88,30 @@ public class Buff extends Actor {
 	}
 
 	public void detach() {
+
+		// Store the current buff instance first
 		if (target.remove(this) && target.sprite != null) {
+
 			fx(false);
+
+			onDetach(this.target);
 		}
 
 		// Remove from the negative buffs list if it exists there
+		// Using synchronization for thread safety
 		if (this.type == buffType.NEGATIVE) {
-			synchronized (negativeBuffs) { // Use synchronization for thread safety
+			synchronized (negativeBuffs) {
 				negativeBuffs.remove(this);
 			}
 		}
 	}
 
-	// New method to detach all negative buffs
+	public void onDetach(Char target){
+		//used in other scripts to activate an effect on buff expiration.
+	}
+
+	// New method to detach all negative buffs for potion of life
 	public static void detachAllNegativeBuffs(Char target) {
-		// Create a temporary list to hold buffs to detach
 		ArrayList<Buff> buffsToDetach = new ArrayList<>();
 
 		// Collect buffs to detach
@@ -111,8 +120,6 @@ public class Buff extends Actor {
 				buffsToDetach.add(buff);
 			}
 		}
-
-		// Now detach each buff without modifying the original list while iterating
 		for (Buff buff : buffsToDetach) {
 			buff.detach();
 		}

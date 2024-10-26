@@ -46,6 +46,9 @@ public class Sai extends MeleeWeapon {
 		hitSoundPitch = 1.3f;
 
 		tier = 3;
+		weaponType = DAGGER;
+		weaponHand = TWO_HANDED;
+
 		DLY = 0.5f; //2x speed
 	}
 

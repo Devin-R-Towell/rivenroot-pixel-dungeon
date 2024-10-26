@@ -95,6 +95,7 @@ public class ScrollOfRemoveCurse extends InventoryScroll {
 		}
 	}
 
+
 	@Override
 	protected void onItemSelected(Item item) {
 		new Flare( 6, 32 ).show( curUser.sprite, 2f );

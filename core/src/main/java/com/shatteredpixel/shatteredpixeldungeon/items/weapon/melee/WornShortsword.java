@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.items.EquipableItem;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
@@ -53,6 +54,7 @@ public class WornShortsword extends MeleeWeapon {
 		hitSoundPitch = 1.1f;
 
 		tier = 1;
+		weaponType = BLADE;
 
 		bones = false;
 	}
@@ -79,9 +81,13 @@ public class WornShortsword extends MeleeWeapon {
 
 	@Override
 	public ArrayList<String> actions(Hero hero) {
-		ArrayList<String> actions = super.actions(hero);
-		actions.add(AC_REFORGE);
-		return actions;
+		if (Hero.heroClass == HeroClass.WARRIOR) {
+			ArrayList<String> actions = super.actions(hero);
+			actions.add(AC_REFORGE);
+			return actions;
+		} else {
+			return super.actions(hero);
+		}
 	}
 
 	@Override
@@ -137,7 +143,7 @@ public class WornShortsword extends MeleeWeapon {
 						@Override
 						protected void onSelect(int index) {
 							if (index == 0) csword.setEnchantment(null);
-							//if index is 1, then the glyph transfer happens in affixSeal
+							//if index is 1, then the enchant transfer happens in reforge
 
 							GLog.p(Messages.get(WornShortsword.class, "reforge"));
 							Dungeon.hero.sprite.operate(Dungeon.hero.pos);

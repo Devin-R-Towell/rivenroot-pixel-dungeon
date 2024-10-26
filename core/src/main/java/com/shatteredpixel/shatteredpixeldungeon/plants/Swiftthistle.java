@@ -63,6 +63,20 @@ public class Swiftthistle extends Plant {
 			plantClass = Swiftthistle.class;
 		}
 	}
+
+	public static class Fruit extends Plant.Fruit {
+		{
+			image = ItemSpriteSheet.FRUIT_SWIFTTHISTLE;
+
+			seedClass = Swiftthistle.Seed.class;
+
+			triggerBuff = "Swiftthistle";
+		}
+
+		public String desc() {
+			return "Eating this berry temporarily makes you go fast. Like really fast.";
+		}
+	}
 	
 	//FIXME lots of copypasta from time freeze here
 	

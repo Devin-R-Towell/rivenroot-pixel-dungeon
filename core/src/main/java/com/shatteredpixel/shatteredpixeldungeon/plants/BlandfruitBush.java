@@ -23,7 +23,10 @@ package com.shatteredpixel.shatteredpixeldungeon.plants;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Blandfruit;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.watabou.utils.Reflection;
 
 public class BlandfruitBush extends Plant {
 
@@ -42,5 +45,19 @@ public class BlandfruitBush extends Plant {
 			plantClass = BlandfruitBush.class;
 		}
 
+	}
+	public static class Fruit extends Plant.Fruit {
+		{
+			image = ItemSpriteSheet.FRUIT_GLOWBERRIES;
+
+			seedClass = BlandfruitBush.Seed.class;
+
+			triggerBuff = "Glowberries";
+		}
+
+		@Override
+		public String desc() {
+			return "This berry glows with a powerful light although weaker then a torch it still lights your way.";
+		}
 	}
 }

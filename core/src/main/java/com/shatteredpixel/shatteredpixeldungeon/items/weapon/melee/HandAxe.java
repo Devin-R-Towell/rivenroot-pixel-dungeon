@@ -34,6 +34,8 @@ public class HandAxe extends MeleeWeapon {
 		hitSoundPitch = 1f;
 
 		tier = 2;
+		weaponType = AXE;
+
 		ACC = 1.32f; //32% boost to accuracy
 	}
 

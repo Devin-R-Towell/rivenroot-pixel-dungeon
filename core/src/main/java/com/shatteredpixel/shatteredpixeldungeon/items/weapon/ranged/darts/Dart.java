@@ -19,7 +19,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
 
-package com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts.darts;
+package com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
@@ -30,7 +30,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.RangedWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingStone;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.RangedWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
@@ -53,7 +54,7 @@ public class Dart extends MissileWeapon {
 		hitSoundPitch = 1.3f;
 		
 		tier = 1;
-		
+		weaponType = ARROW;
 		//infinite, even with penalties
 		baseUses = 1000;
 	}
@@ -62,9 +63,9 @@ public class Dart extends MissileWeapon {
 	
 	@Override
 	public ArrayList<String> actions(Hero hero) {
-		ArrayList<String> actions = super.actions( hero );
-		actions.add( AC_TIP );
-		return actions;
+			ArrayList<String> actions = super.actions(hero);
+			actions.add(AC_TIP);
+			return actions;
 	}
 	
 	@Override
@@ -77,17 +78,22 @@ public class Dart extends MissileWeapon {
 	
 	@Override
 	public int min(int lvl) {
-		if (bow != null){
-			if (!(this instanceof TippedDart) && Dungeon.hero.buff(RangedWeapon.ChargedShot.class) != null){
-				//ability increases base dmg by 37.5%, scaling by 50%
-				return  7 +                     //7 base
-						2*bow.buffedLvl() + lvl;//+2 per bow level, +1 per level
-			} else {
-				return  4 +                     //4 base
-						bow.buffedLvl() + lvl;  //+1 per level or bow level
-			}
-		} else {
-			return  1 +     //1 base, down from 2
+		if (bow != null) {
+			if (!(this instanceof TippedDart) && Dungeon.hero.buff(RangedWeapon.ChargedShot.class) != null) {
+				if (!(this instanceof ThrowingStone)) {
+					//ability increases base dmg by 37.5%, scaling by 50%
+					return 7 +                     //7 base
+							2 * bow.buffedLvl() + lvl;//+2 per bow level, +1 per level
+				} else {
+					return 2 +		//ThrowingStones hav lower damage
+							bow.buffedLvl() + lvl;
+				}
+			}else {
+				return 4 +
+						bow.buffedLvl() + lvl; }
+				}  else {
+
+			return 1 +     //1 base, down from 2
 					lvl;    //scaling unchanged
 		}
 	}
@@ -95,13 +101,18 @@ public class Dart extends MissileWeapon {
 	@Override
 	public int max(int lvl) {
 		if (bow != null){
-			if (!(this instanceof TippedDart) && Dungeon.hero.buff(RangedWeapon.ChargedShot.class) != null){
-				//ability increases base dmg by 37.5%, scaling by 50%
-				return  15 +                       //15 base
-						4*bow.buffedLvl() + 2*lvl; //+4 per bow level, +2 per level
+			if (!(this instanceof TippedDart) && Dungeon.hero.buff(RangedWeapon.ChargedShot.class) != null) {
+				if (!(this instanceof ThrowingStone)) {
+					//ability increases base dmg by 37.5%, scaling by 50%
+					return 15 +                       //15 base
+							4 * bow.buffedLvl() + 2 * lvl; //+4 per bow level, +2 per level
+				} else {
+					return 6 +                       //6 base
+							3 * bow.buffedLvl() + 2 * lvl; //+3 per bow level, +2 per level
+				}
 			} else {
-				return  12 +                       //12 base
-						3*bow.buffedLvl() + 2*lvl; //+3 per bow level, +2 per level
+				return 12 + 						//12 base
+					   3 * bow.buffedLvl() + 2 * lvl;
 			}
 		} else {
 			return  2 +     //2 base, down from 5
@@ -306,44 +317,45 @@ public class Dart extends MissileWeapon {
 				@Override
 				protected void onSelect(int index) {
 					super.onSelect(index);
-					
-					if (index == 0 && options.length == 3){
-						if (item.quantity() <= maxSeedsToUse){
-							item.detachAll( curUser.belongings.backpack );
-						} else {
-							item.quantity(item.quantity() - maxSeedsToUse);
+						if (index == 0 && options.length == 3) {
+							if (item.quantity() <= maxSeedsToUse) {
+								item.detachAll(curUser.belongings.backpack);
+							} else {
+								item.quantity(item.quantity() - maxSeedsToUse);
+							}
+
+							if (maxToTip < curItem.quantity()) {
+								curItem.quantity(curItem.quantity() - maxToTip);
+							} else {
+								curItem.detachAll(curUser.belongings.backpack);
+							}
+
+							TippedDart newDart = TippedDart.getTipped((Plant.Seed) item, maxToTip);
+							if (!newDart.collect())
+								Dungeon.level.drop(newDart, curUser.pos).sprite.drop();
+
+							curUser.spend(1f);
+							curUser.busy();
+							curUser.sprite.operate(curUser.pos);
+
+						} else if ((index == 1 && options.length == 3) || (index == 0 && options.length == 2)) {
+							item.detach(curUser.belongings.backpack);
+
+							if (curItem.quantity() <= singleSeedDarts) {
+								curItem.detachAll(curUser.belongings.backpack);
+							} else {
+								curItem.quantity(curItem.quantity() - singleSeedDarts);
+							}
+
+							TippedDart newDart = TippedDart.getTipped((Plant.Seed) item, singleSeedDarts);
+							if (!newDart.collect())
+								Dungeon.level.drop(newDart, curUser.pos).sprite.drop();
+
+							curUser.spend(1f);
+							curUser.busy();
+							curUser.sprite.operate(curUser.pos);
 						}
-						
-						if (maxToTip < curItem.quantity()){
-							curItem.quantity(curItem.quantity() - maxToTip);
-						} else {
-							curItem.detachAll(curUser.belongings.backpack);
-						}
-						
-						TippedDart newDart = TippedDart.getTipped((Plant.Seed) item, maxToTip);
-						if (!newDart.collect()) Dungeon.level.drop(newDart, curUser.pos).sprite.drop();
-						
-						curUser.spend( 1f );
-						curUser.busy();
-						curUser.sprite.operate(curUser.pos);
-						
-					} else if ((index == 1 && options.length == 3) || (index == 0 && options.length == 2)){
-						item.detach( curUser.belongings.backpack );
-						
-						if (curItem.quantity() <= singleSeedDarts){
-							curItem.detachAll( curUser.belongings.backpack );
-						} else {
-							curItem.quantity(curItem.quantity() - singleSeedDarts);
-						}
-						
-						TippedDart newDart = TippedDart.getTipped((Plant.Seed) item, singleSeedDarts);
-						if (!newDart.collect()) Dungeon.level.drop(newDart, curUser.pos).sprite.drop();
-						
-						curUser.spend( 1f );
-						curUser.busy();
-						curUser.sprite.operate(curUser.pos);
 					}
-				}
 			});
 			
 		}

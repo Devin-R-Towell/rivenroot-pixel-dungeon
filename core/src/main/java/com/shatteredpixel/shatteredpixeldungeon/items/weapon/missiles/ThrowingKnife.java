@@ -37,6 +37,7 @@ public class ThrowingKnife extends MissileWeapon {
 		bones = false;
 		
 		tier = 1;
+		weaponType = DAGGER;
 		baseUses = 5;
 	}
 	

@@ -34,6 +34,9 @@ public class Glaive extends MeleeWeapon {
 		hitSoundPitch = 0.8f;
 
 		tier = 5;
+		weaponType = POLEARM;
+		weaponHand = TWO_HANDED;
+
 		DLY = 1.5f; //0.67x speed
 		RCH = 2;    //extra reach
 	}

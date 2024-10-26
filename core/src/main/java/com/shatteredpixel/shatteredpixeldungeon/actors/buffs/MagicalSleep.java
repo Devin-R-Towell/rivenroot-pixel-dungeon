@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfMending;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
@@ -46,10 +47,6 @@ public class MagicalSleep extends Buff {
 				} else {
 					if (target instanceof  Hero) GLog.i(Messages.get(this, "fallasleep"));
 				}
-			}
-
-			if (target instanceof Mob) {
-				((Mob) target).state = ((Mob) target).SLEEPING;
 			}
 
 			return true;

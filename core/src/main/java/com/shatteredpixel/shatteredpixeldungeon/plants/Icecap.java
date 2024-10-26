@@ -62,4 +62,18 @@ public class Icecap extends Plant {
 			plantClass = Icecap.class;
 		}
 	}
+
+	public static class Fruit extends Plant.Fruit {
+		{
+			image = ItemSpriteSheet.FRUIT_ICECAP;
+
+			seedClass = Icecap.Seed.class;
+
+			triggerBuff = "Icecap";
+		}
+	}
+
+	public String desc() {
+		return "Eating this berry imbues you with fire. Your attacks deal extra fire damage.";
+	}
 }

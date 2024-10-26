@@ -26,12 +26,15 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
+import sun.jvm.hotspot.debugger.win32.coff.SectionHeader;
+
 public class Greatshield extends MeleeWeapon {
 
 	{
 		image = ItemSpriteSheet.GREATSHIELD;
 
 		tier = 5;
+		weaponType = SHIELD;
 	}
 
 	@Override

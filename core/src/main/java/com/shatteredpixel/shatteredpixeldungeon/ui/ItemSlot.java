@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.ui;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
@@ -238,17 +239,19 @@ public class ItemSlot extends Button {
 				&& ((MissileWeapon) item).durabilityLeft() <= 50f
 				&& ((MissileWeapon) item).durabilityLeft() <= ((MissileWeapon) item).durabilityPerUse()){
 			status.hardlight(WARNING);
+
 		} else {
 			status.resetColor();
 		}
 
-		if (item.icon != -1 && (item.isIdentified() || (item instanceof Ring && ((Ring) item).isKnown()))){
-			extra.text( null );
+		if (item.icon != -1 && (item.isIdentified() || (item instanceof Ring && ((Ring) item).isKnown()))) {
+			extra.text(null);
 
 			itemIcon = new Image(Assets.Sprites.ITEM_ICONS);
 			itemIcon.frame(ItemSpriteSheet.Icons.film.get(item.icon));
 			add(itemIcon);
-
+		} else if (item instanceof Dewdrop) {
+			extra.text();
 		} else if (item instanceof Weapon || item instanceof Armor) {
 
 			if (item.levelKnown){

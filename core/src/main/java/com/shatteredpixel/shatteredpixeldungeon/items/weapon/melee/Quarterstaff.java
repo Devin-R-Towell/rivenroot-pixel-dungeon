@@ -38,6 +38,7 @@ public class Quarterstaff extends MeleeWeapon {
 		hitSoundPitch = 1f;
 
 		tier = 2;
+		weaponType = POLEARM;
 	}
 
 	@Override

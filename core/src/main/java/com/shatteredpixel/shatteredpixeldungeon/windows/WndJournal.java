@@ -251,6 +251,7 @@ public class WndJournal extends WndTabbed {
 				){
 					@Override
 					public boolean onClick(float x, float y) {
+
 						if (inside( x, y ) && found) {
 							ShatteredPixelDungeon.scene().addToFront( new WndStory( Document.ADVENTURERS_GUIDE.pageSprite(page),
 									Document.ADVENTURERS_GUIDE.pageTitle(page),
@@ -277,7 +278,7 @@ public class WndJournal extends WndTabbed {
 	public static class AlchemyTab extends Component {
 		
 		private RedButton[] pageButtons;
-		private static final int NUM_BUTTONS = 9;
+		private static final int NUM_BUTTONS = 10;
 		
 		private static final int[] sprites = {
 				ItemSpriteSheet.SEED_HOLDER,
@@ -288,7 +289,8 @@ public class WndJournal extends WndTabbed {
 				ItemSpriteSheet.BOMB_HOLDER,
 				ItemSpriteSheet.MISSILE_HOLDER,
 				ItemSpriteSheet.ELIXIR_HOLDER,
-				ItemSpriteSheet.SPELL_HOLDER
+				ItemSpriteSheet.SPELL_HOLDER,
+				ItemSpriteSheet.SCROLL_HOLDER
 		};
 		
 		public static int currentPageIdx   = 0;
@@ -352,7 +354,7 @@ public class WndJournal extends WndTabbed {
 					if (i == 4){
 						y += ITEM_HEIGHT;
 						x = 0;
-						buttonWidth = width()/4;
+						buttonWidth = width()/5;
 					}
 				}
 			}
@@ -480,7 +482,7 @@ public class WndJournal extends WndTabbed {
 		
 		private void updateList(){
 
-			grid.addHeader("_" + Messages.get(this, "title") + "_", 9, true);
+			grid.addHeader("_" + Messages.get(this, "title") + "_", 10, true);
 
 			grid.addHeader(Messages.get(this, "desc"), 6, true);
 

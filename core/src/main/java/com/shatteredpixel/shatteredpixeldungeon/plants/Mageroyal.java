@@ -61,4 +61,18 @@ public class Mageroyal extends Plant {
 			plantClass = Mageroyal.class;
 		}
 	}
+
+	public static class Fruit extends Plant.Fruit {
+		{
+			image = ItemSpriteSheet.FRUIT_MAGEROYAL;
+
+			seedClass = Mageroyal.Seed.class;
+
+			triggerBuff = "Mageroyal";
+		}
+
+		public String desc() {
+			return "This berry is a powerful antioxidant, it will neutralize most poisons.";
+		}
+	}
 }

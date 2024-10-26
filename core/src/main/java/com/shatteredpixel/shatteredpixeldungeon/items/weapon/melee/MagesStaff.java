@@ -74,6 +74,7 @@ public class MagesStaff extends MeleeWeapon {
 		hitSoundPitch = 1.1f;
 
 		tier = 1;
+		weaponType = POLEARM;
 
 		defaultAction = AC_ZAP;
 		usesTargeting = true;

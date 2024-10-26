@@ -35,38 +35,52 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Blindweed extends Plant {
-	
+
 	{
 		image = 11;
-		seedClass = Seed.class;
 	}
-	
+
 	@Override
-	public void activate( Char ch ) {
-		
+	public void activate(Char ch) {
+
 		if (ch != null) {
-			if (ch instanceof Hero && ((Hero) ch).subClass == HeroSubClass.WARDEN){
-				Buff.affect(ch, Invisibility.class, Invisibility.DURATION/2f);
+			if (ch instanceof Hero && ((Hero) ch).subClass == HeroSubClass.WARDEN) {
+				Buff.affect(ch, Invisibility.class, Invisibility.DURATION / 2f);
 			} else {
 				Buff.prolong(ch, Blindness.class, Blindness.DURATION);
 				Buff.prolong(ch, Cripple.class, Cripple.DURATION);
 				if (ch instanceof Mob) {
-					if (((Mob) ch).state == ((Mob) ch).HUNTING) ((Mob) ch).state = ((Mob) ch).WANDERING;
-					((Mob) ch).beckon(Dungeon.level.randomDestination( ch ));
+					if (((Mob) ch).state == ((Mob) ch).HUNTING)
+						((Mob) ch).state = ((Mob) ch).WANDERING;
+					((Mob) ch).beckon(Dungeon.level.randomDestination(ch));
 				}
 			}
 		}
-		
+
 		if (Dungeon.level.heroFOV[pos]) {
-			CellEmitter.get( pos ).burst( Speck.factory( Speck.LIGHT ), 4 );
+			CellEmitter.get(pos).burst(Speck.factory(Speck.LIGHT), 4);
 		}
 	}
-	
+
 	public static class Seed extends Plant.Seed {
 		{
 			image = ItemSpriteSheet.SEED_BLINDWEED;
 
 			plantClass = Blindweed.class;
+		}
+	}
+
+	public static class Fruit extends Plant.Fruit {
+
+		{
+			image = ItemSpriteSheet.FRUIT_BLINDWEED;
+
+			seedClass = Blindweed.Seed.class;
+
+			triggerBuff = "Blindweed";
+		}
+		public String desc() {
+			return "A small berry, that will turn you invisible for a time.";
 		}
 	}
 }

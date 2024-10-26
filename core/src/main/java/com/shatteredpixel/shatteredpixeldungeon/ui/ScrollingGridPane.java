@@ -175,6 +175,11 @@ public class ScrollingGridPane extends ScrollPane {
 		public GridItem( Image icon ) {
 			super();
 
+			if (icon == null) {
+				this.icon = new Image();  // Or handle null case appropriately
+				return;
+			}
+
 			if (icon instanceof ItemSprite){
 				this.icon = new ItemSprite();
 			} else {

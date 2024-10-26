@@ -25,13 +25,10 @@ import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Berserk;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.duelist.ElementalStrike;
-import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.WornShortsword;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.KindOfWeapon;
@@ -64,6 +61,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Unstab
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Vampiric;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.RunicBlade;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Scimitar;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.RangedWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
@@ -78,41 +76,43 @@ import java.util.Arrays;
 
 abstract public class Weapon extends KindOfWeapon {
 
-	protected static final String AC_REFORGE      = "REFORGE";
+	protected static final String AC_REFORGE = "REFORGE";
 
-	public float    ACC = 1f;	// Accuracy modifier
-	public float	DLY	= 1f;	// Speed modifier
-	public int      RCH = 1;    // Reach modifier (only applies to melee hits)
+	public float ACC = 1f;    // Accuracy modifier
+	public float DLY = 1f;    // Speed modifier
+	public int RCH = 1;    // Reach modifier (only applies to melee hits)
+
 
 	public enum Augment {
-		SPEED   (0.7f, 2/3f),
-		DAMAGE  (1.5f, 5/3f),
-		NONE	(1.0f, 1f);
+		SPEED(0.7f, 2 / 3f),
+		DAMAGE(1.5f, 5 / 3f),
+		NONE(1.0f, 1f);
 
 		private float damageFactor;
 		private float delayFactor;
 
-		Augment(float dmg, float dly){
+		Augment(float dmg, float dly) {
 			damageFactor = dmg;
 			delayFactor = dly;
 		}
+
 		public static int INFINITE_DAMAGE = 1_000_000;
 
-		public int damageFactor(int dmg){
+		public int damageFactor(int dmg) {
 			return Math.round(dmg * damageFactor);
 		}
 
-		public float delayFactor(float dly){
+		public float delayFactor(float dly) {
 			return dly * delayFactor;
 		}
 	}
 
 	public Augment augment = Augment.NONE;
-	
+
 	private static final int USES_TO_ID = 20;
 	private float usesLeftToID = USES_TO_ID;
-	private float availableUsesToID = USES_TO_ID/2f;
-	
+	private float availableUsesToID = USES_TO_ID / 2f;
+
 	public Enchantment enchantment;
 	public boolean enchantHardened = false;
 	public boolean curseInfusionBonus = false;
@@ -120,7 +120,6 @@ abstract public class Weapon extends KindOfWeapon {
 
 	protected WornShortsword csword;
 
-	
 	@Override
 	public int proc( Char attacker, Char defender, int damage ) {
 		
@@ -157,15 +156,15 @@ abstract public class Weapon extends KindOfWeapon {
 		}
 	}
 	
-	private static final String USES_LEFT_TO_ID = "uses_left_to_id";
-	private static final String AVAILABLE_USES  = "available_uses";
-	private static final String ENCHANTMENT	    = "enchantment";
-	private static final String ENCHANT_HARDENED = "enchant_hardened";
+	private static final String USES_LEFT_TO_ID 	 = "uses_left_to_id";
+	private static final String AVAILABLE_USES  	 = "available_uses";
+	private static final String ENCHANTMENT	    	 = "enchantment";
+	private static final String ENCHANT_HARDENED 	 = "enchant_hardened";
 	private static final String CURSE_INFUSION_BONUS = "curse_infusion_bonus";
 	private static final String MASTERY_POTION_BONUS = "mastery_potion_bonus";
-	private static final String SWORD            = "sword";
+	private static final String SWORD           	 = "sword";
 
-	private static final String AUGMENT	        = "augment";
+	private static final String AUGMENT	       		 = "augment";
 
 	public static int INFINITE_DR_ROLL = 1_000_000;
 
@@ -311,6 +310,8 @@ abstract public class Weapon extends KindOfWeapon {
 
 	public abstract int STRReq(int lvl);
 
+
+	// could be interesting to make different Weapon types have different strength scaling.
 	protected static int STRReq(int tier, int lvl){
 		lvl = Math.max(0, lvl);
 
@@ -338,20 +339,22 @@ abstract public class Weapon extends KindOfWeapon {
 			}
 		} else if (enchantment != null) {
 			//chance to lose harden buff is 10/20/40/80/100% when upgrading from +6/7/8/9/10
-			if (enchantHardened){
-				if (level() >= 6 && Random.Float(10) < Math.pow(2, level()-6)){
-					enchantHardened = false;
+			if (enchantHardened) {
+				// adamantine is extremely efficient at holding onto magic
+				if (adamantine == false) { //If an Item is adamantined it is always hardened.
+					if (level() >= 6 && Random.Float(10) < Math.pow(2, level() - 6)) {
+						enchantHardened = false;  //chance to remove curse is a static 33%
+					} else if (hasCurseEnchant()) {
+						if (Random.Int(3) == 0) enchant(null);
+						//otherwise chance to lose enchant is 10/20/40/80/100% when upgrading from +4/5/6/7/8
+					} else if (level() >= 4 && Random.Float(10) < Math.pow(2, level() - 4)) {
+						enchant(null);
+					}
 				}
-
-			//chance to remove curse is a static 33%
-			} else if (hasCurseEnchant()) {
-				if (Random.Int(3) == 0) enchant(null);
-
-			//otherwise chance to lose enchant is 10/20/40/80/100% when upgrading from +4/5/6/7/8
-			} else if (level() >= 4 && Random.Float(10) < Math.pow(2, level()-4)){
-				enchant(null);
 			}
 		}
+
+
 		
 		cursed = false;
 
@@ -399,7 +402,8 @@ abstract public class Weapon extends KindOfWeapon {
 
 		return this;
 	}
-	
+
+	//logic for reforging weapon.
 	public Weapon enchant( Enchantment ench ) {
 		if (ench == null || !ench.curse()) curseInfusionBonus = false;
 		enchantment = ench;

@@ -55,4 +55,17 @@ public class Stormvine extends Plant {
 			plantClass = Stormvine.class;
 		}
 	}
+
+	public static class Fruit extends Plant.Fruit {
+		{
+			image = ItemSpriteSheet.FRUIT_STORMVINE;
+
+			seedClass = Stormvine.Seed.class;
+
+			triggerBuff = "Stormvine";
+		}
+		public String desc() {
+			return "Eating this berry will temporarily remove your from gravities effect.";
+		}
+	}
 }

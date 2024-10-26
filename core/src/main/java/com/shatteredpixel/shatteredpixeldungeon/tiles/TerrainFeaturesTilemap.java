@@ -63,7 +63,7 @@ public class TerrainFeaturesTilemap extends DungeonTilemap {
 		}
 
 		if (plants.get(pos) != null){
-			return plants.get(pos).image + 7*16;
+			return plants.get(pos).image + 7*17;
 		}
 
 		int stage = (Dungeon.depth-1)/5;

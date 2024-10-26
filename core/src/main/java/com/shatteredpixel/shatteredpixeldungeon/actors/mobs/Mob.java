@@ -73,7 +73,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Lucky;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts.darts.Dart;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.ranged.darts.Dart;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Bestiary;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
@@ -452,7 +452,7 @@ public abstract class Mob extends Char {
 		}
 		return false;
 	}
-	
+
 	protected boolean canAttack( Char enemy ) {
 		if (Dungeon.level.adjacent( pos, enemy.pos )){
 			return true;
@@ -500,6 +500,7 @@ public abstract class Mob extends Char {
 			if (cellIsPathable(target)) {
 				step = target;
 			}
+
 
 		} else {
 
@@ -773,7 +774,6 @@ public abstract class Mob extends Char {
 				alerted = true;
 			}
 		}
-		
 		super.damage( dmg, src );
 	}
 	
